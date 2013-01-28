@@ -18,16 +18,7 @@ $settings = array(
 	'topic' => 'Pasikeitimai valdžioje: Uplink buvo deleguotas į admino pavaduotoją ir gali administruoti žaidimą. Prey ir ganja buvo deleguoti iki chat moderatorių pareigu. Visi kiti galit nevargti prašydami papildomų teisių ir pareigų.',
 	'max_time' => 400,     //maksimalus laiko kiekis
 	'time_ratio' => 12 * 60,      //kas kiek minuciu pridedama laiko
-	'chat_block' => true,   //ar butinas pasto patvirtinimas norint rasyti chate
-	'database' => array(
-		'adapter' => 'pdo_mysql',
-		'params'  => array(
-			'host'     => 'localhost',
-			'username' => 'agonija',
-			'password' => '8CdN6Gp3BGrXqpcP',
-			'dbname'   => 'agonija'
-		)
-	)
+	'chat_block' => true   //ar butinas pasto patvirtinimas norint rasyti chate
 );
 
 @include("config.php");

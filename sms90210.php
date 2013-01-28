@@ -1,10 +1,11 @@
 <?php
 
 require_once('WebToPay.php');
+$SET=include('set.php');
 
 try {
     WebToPay::checkResponse($_GET, array(
-            'sign_password' => '3890f5be1bd7f5f38f5581ac72a882b9',
+            'sign_password' => $settings['sms_pass'],
             'log'           => 'webtopay.log',
         ));
 
@@ -17,7 +18,6 @@ try {
 	$key=$_GET['wp_key'];
 	$sid=$_GET['wp_id'];
 	define ("NW_TRUE_PAGE",'');
-	$SET=include('set.php');
 
 	//include('include/dbconnect.php');
 
