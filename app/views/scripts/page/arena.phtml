@@ -1,0 +1,130 @@
+<?=$this->goodOrBad($this->good,$this->bad)?>
+<div style="font-size:22px;font-weight:bold;text-align:center;border-bottom:1px solid #585858">Kovos</div>
+
+<? foreach ($this->data as $v) {
+	echo $this->arenaEntry($v,$this->user->getid(), $this->user->getrace());
+}?>
+
+<?=$this->clear("both")?>
+
+<? if ($this->creates!=0) return 0;?>
+
+<div style="margin-top:60px;margin-bottom:20px;font-size:22px;font-weight:bold;text-align:center;border-bottom:1px solid #585858">Siulyti kovą</div>
+
+<?=$this->tip("
+	Jūs bet kuriuo metu galite pasiulyti tik vieną kovą. Savo sukurtą kovą galėsite atšaukti tik tada, jeigu
+	joje nebus niekas užsiregistravęs. Visais kitais atvejais kovos atšaukti negalėsite, tad pildydami laukelius būkite atidūs
+")?>
+
+<table width="100%" border="0" cellpadding="0" cellspacing="1" id="new_atack">
+	<tr>
+		<td class="td"><h3 class="title">Pavadinimas</h3></td>
+		<td class="td"><input size="40" type="text" id="title" value="<?=$this->title?>" /></td>
+	</tr>
+	<tr>
+		<td class="td"><h3 class="title">Lygio ribos</h3></td>
+		<td class="td">
+			Min <input type="text" size="4" id="min_lvl" value="<?=$this->min_lvl?>" /> Max <input type="text" size="4" id="max_lvl" value="<?=$this->max_lvl?>" />
+			<div style="font-size:10px">Jeigu paliksite 0, riba nebus taikoma. Nebūtina turėti abiejų ribų.</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="td"><h3 class="title">Laikas</h3></td>
+		<td class="td">
+			<table>
+				<tr>
+					<td>
+						<input id="time" value="<?=$this->time?>" type="text" style="width:200px" >
+					</td>
+					<td>
+						Ilgiausia trukmė:
+						<select id="duration">
+							<?
+							$times=array(10,15,30,45,60,90,120);
+
+							foreach ($times as $v) {?>
+								<option value="<?=$v?>" <?=($this->duration==$v)? "selected" : ""?>><?=floor($v/60)?> val. <?=($v%60)?> min.</option>
+							<? } ?>
+						</select>
+
+						<? $this->run("
+							new Control.DatePicker('time', {icon: '/img/calendar.png',
+							timePicker: true, timePickerAdjacent: true, locale: 'lt_LT' });
+						");?>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td class="td"><h3 class="title">Žemėlapiai</h3></td>
+		<td class="td">
+			<div>
+				<? foreach ($this->maps as $key => $v) {?>
+					<div class="map_box" id="map_<?=$key?>">
+						 <img class="pointer" src="/img/maps/<?=$v['img']?>" border="0" width="80" height="80" />
+					</div>
+					<? $this->run("
+						new Overlib('{$v['apie']}', P('map_$key'));
+						P('map_$key').observe('click', function () {
+							chose_map($key);
+						});
+					");?>
+				<? } ?>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td class="td"><h3 class="title">Dydis</h3></td>
+		<td class="td">
+			Ilgis <input type="text" size="4" id="width" value="<?=$this->width?>" /> Plotis <input type="text" size="4" id="height" value="<?=$this->height?>" />
+		</td>
+	</tr>
+	<tr>
+		<td class="td"><h3 class="title">Komandų dydis</h3></td>
+		<td class="td">
+			<select id="size">
+				<?
+				$sizes=array(
+					2,4,6,8,10
+				);
+				foreach ($sizes as $v) {?>
+					<option value="<?=$v?>" <?=($v==$this->size)? "selected" : ""?>><?=$v/2?> vs <?=$v/2?></option>
+				<? } ?>
+			</select>
+		</td>
+	</tr>
+	<tr>
+		<td class="td"><h3 class="title">Slaptažodis</h3></td>
+		<td class="td">
+			<input id="password" value="<?=$this->password?>" type="password" />
+		</td>
+	</tr>
+	<tr>
+		<td class="td"><h3 class="title">Kurti</h3></td>
+		<td class="td">
+			<input type="button" value="kurti" id="make_atack" />
+		</td>
+	</tr>
+</table>
+
+<?$this->run("
+	P('make_atack').observe('click', function () {
+		content('{$this->url(array())}', {
+			'title' : \$F('title'),
+			'min_lvl' : \$F('min_lvl'),
+			'max_lvl' : \$F('max_lvl'),
+			'time' : \$F('time'),
+			'duration' : \$F('duration'),
+			'map' : MAP,
+			'width' : \$F('width'),
+			'height' : \$F('height'),
+			'size' : \$F('size'),
+			'password' : \$F('password'),
+			'create' : 1
+		}, no);
+	});
+");
+if ($this->map) {
+	$this->run("chose_map({$this->map})");
+}?>

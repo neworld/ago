@@ -1,0 +1,35 @@
+<?
+class socialas {
+	var $key;
+	var $value;
+
+	function __construct($key, $value) {
+		$this->key = $key;
+		$this->value = $value;
+	}
+}
+
+//iskirstom memberius
+$friend = array();
+$ignore = array();
+foreach ($this->members as $v) {
+	switch ($v->type) {
+		case Social::FRIEND : $friend[] = new socialas($v->id, $v->name); break;
+		case Social::IGNORE : $ignore[] = new socialas($v->id, $v->name); break;
+	}
+}
+?>
+
+<div class="social-box" style="float:left">
+	<img src="/img/friend.png" border="0" width="128" height="128" alt="draugas" style="align:center" />
+	<ul id="social-friend" class="social-list">
+
+	</ul>
+</div>
+
+<div class="social-box" style="float:right">
+	<img src="/img/ignore.png" border="0" width="128" height="128" alt="blokuotas" style="align:center" />
+	<ul id="social-ignore" class="social-list">
+
+	</ul>
+</div>

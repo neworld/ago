@@ -1,0 +1,7 @@
+<div style="border:solid 1px #1F354C;display:block;height:<?=$this->screen->height-40?>px;overflow:auto">
+	<h2><?=$this->title?></h2>
+	<div style="margin-top:6px"><?=$this->text?></div>
+</div>
+<div style="text-align:center">
+	<?=$this->paginationControl($this->paginator, 'Sliding', 'pagination_control.phtml');?>
+</div>

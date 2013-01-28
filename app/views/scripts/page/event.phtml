@@ -1,0 +1,45 @@
+<div style="border:solid 1px #1F354C;display:block;height:<?=$this->screen->height-40?>px;overflow:auto">
+	<? if ($this->num>0) { ?>
+		<? foreach ($this->data as $item) {?>
+			<div style="margin:4px; <?=($item->date>$this->last_event)? 'background-color:#1F354C' : '' ?>">
+				[<?=$item->date?>] <?=$item->text?>
+			</div>
+		<?}?>
+	<? } else {?>
+		<i>Nėra nei vieno įvykio</i>
+	<? } ?>
+</div>
+<div style="float:left">
+	<?=$this->paginationControl($this->paginator, 'Sliding', 'pagination_control.phtml');?>
+</div>
+<div style="float:right">
+	<select id="tipas" style="font-size:8px;margin:0px; padding:0px">
+		<?
+		$d = include("app/data/events.php");
+		foreach ($d as $key => $v) {
+			?><option value="<?=$key?>"<?=($key == $this->type)? ' selected' : ''?>><?=$v?></option><?
+		}
+		$this->run("
+			P('tipas').observe('change', function () {
+				content('/page/event/tipas/' + \$F('tipas'), null, no);
+			});
+		");?>
+	</select>
+	<a onclick="content('<?=$this->url(array('page' => $this->page, 'refresh' => 1, 'type' => $this->type))?>',null,no);">Pažymėti kaip skaitytus</a> |
+	<a id="a-delete" style="color:#999999">Ištrinti</a>
+</div>
+<?
+$this->run("
+	P('a-delete').observe('click',function () {
+		Dialogs.confirm(
+			'Ar tikrai norite ištrinti visus įvykius?',
+			function () {
+				content('".$this->url(array('delete' => 1, 'type' => $this->type))."', null, no);
+				Dialogs.close();
+			},
+			function () {
+				Dialogs.close();
+			}
+		)
+	});
+");

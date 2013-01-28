@@ -1,0 +1,91 @@
+<?= $this->doctype('XHTML1_STRICT')."\n" ?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head><?="\n"?>
+<?= $this->headLink()."\n" ?>
+<?= $this->headMeta()."\n" ?>
+<?= $this->headScript()."\n" ?>
+<title><?= $this->title ?></title><?="\n"?>
+<meta name="verify-webtopay" content="b82185f5304dea3b16bf5e6df7cea4b3">
+</head><?="\n"?>
+<body><?="\n"?>
+<div id="header">
+	<h1><a href="?"><?= $this->title ?></a></h1>
+	<h2><?= $this->des ?></h2>
+
+</div>
+
+<div id="menu">
+	<ul>
+		<? foreach ($this->menu as $v) {?>
+			<li><?=$v->makehref()?></li>
+		<? } ?>
+	</ul>
+</div>
+
+<hr />
+<div id="page">
+	<div id="content">
+		<div class="post">
+			<h2 class="title"><?=$this->ctitle?></h2>
+			<div class="entry"><?= $this->contentas."\n" ?></div>
+		</div>
+	</div>
+	<div id="sidebar">
+		<ul>
+			<li>
+				<?=$this->goodOrBad(null,$this->error)?>
+				<form id="loginform" method="post" action="/main/login">
+					<div>
+						<input type="text" name="name" size="30" /><br />
+						<input type="password" name="psw" id="s" size="30" /><br />
+						<input name="submit" type="submit" value="Prisijungti" />
+						<input name="submit" type="button" value="Atkurti slaptažodį" onclick="window.location='/index/lostpsw';" />
+					</div>
+				</form>
+			</li>
+			<li>
+				<div style="margin-top:20px">Viso žaidėjų: <?=($this->num_man+$this->num_rjal)?></div>
+				<div>Užsiregistravusių rjalų: <?=$this->num_rjal?></div>
+				<div>Užsiregistravusių žmonių: <?=$this->num_man?></div>
+				<div>Online: <?=$this->num_online?></div>
+
+				<div id="demo_box">
+					Jeigu norite prieš užsiregistruodami pabandyti žaidimą
+					Tai galite padaryti prisijungę su vienu iš demo vartotoju:<br />
+					<br />
+					Vardas: <b>demo</b> slaptažodis: <b>demo</b><br />
+					Vardas: <b>demo2</b> slaptažodis: <b>demo2</b>
+				</div>
+
+				<div>
+			</li>
+			<li>
+				<div style="margin-top:30px">
+					<div class="imagebox">
+						Rjalas<br />
+						<img src="/img/rjal.jpg" style="width:150px;height:150px" alt="rjalas" />
+						<div style="font-size:12px;">
+							Žaidėjų: <?=$this->num_rjal?><br />
+							Pergalės: <?=$this->kill_rjal?>
+						</div>
+					</div>
+					<div class="imagebox">
+						Žmogus<br />
+						<img src="/img/man.jpg" style="width:150px;height:150px" alt="žmogus" />
+						<div style="font-size:12px;">
+							Žaidėjų: <?=$this->num_man?><br />
+							Pergalės: <?=$this->kill_man?>
+						</div>
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div style="clear: both;">&nbsp;</div>
+</div>
+<hr />
+<div id="footer">
+	<p>(c) 2008 agonija.eu. Sukurta neworld</p>
+</div>
+</body><?="\n"?>
+</html>

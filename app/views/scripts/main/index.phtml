@@ -1,0 +1,274 @@
+<?= $this->doctype('XHTML1_STRICT')."\n" ?>
+<? echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'."\n" ?>
+<head><?="\n"?>
+<?= $this->headLink()."\n" ?>
+<?= $this->headMeta()."\n" ?>
+<?= $this->headScript()."\n" ?>
+<title>Agonija.eu</title><?="\n"?>
+<script type="text/javascript">
+var username='<?=$this->name?>';
+var SES_KEY='<?=$this->ses_key?>';
+var DRINK=<?=$_SESSION['drink']?>;
+var smilein=new Array();
+var smileout=new Array();
+var url='http://<?=Zend_Registry::get('config')->webhost?>';
+
+var bar_hp;
+var bar_exp;
+var bar_mana;
+var bar_work;
+
+Event.observe(window, 'load', function() {
+	P('menu-main-links').style.width=P('menu-main-links').select('li').length*80+"px";
+
+	P('chatfrm').style.width=(P('chatfrm').select('div').length*302)+"px"
+
+	resizorius()
+
+	Event.observe(window, 'resize', function() {
+		resizorius()
+	});
+
+	Event.observe(document, 'mousemove', function (e) {
+		if (ITEM_MENU_VIEW) {
+			var X = Event.pointerX(e);
+			var Y = Event.pointerY(e);
+
+			var a = P('item-menu').cumulativeOffset();
+			var bb = P('Content').cumulativeScrollOffset();
+
+			var dimensions = P('item-menu').getDimensions();
+
+			if ((X<a[0]-25) || (X>a[0]+25+dimensions.width) || (Y<a[1]-25-bb[1]) || (Y>a[1]-bb[1]+25+dimensions.height)) {
+				hide_item_menu();
+			}
+		}
+	});
+
+	var carousel = new Carousel(P('chat_main_box'), $$('.chat_slide'), $$('a.chat_jumper'), { jumperClassName : 'chat_jumper', wheel: false} );
+
+	P('menu-left').observe('click', function() {
+		move_menu_content(-200);
+	});
+	P('menu-right').observe('click', function() {
+		move_menu_content(200);
+	});
+	move_menu_content(1);
+	Event.observe(P('menu-main'), "mousewheel", function (e) { move_menu_content(Event.wheel(e)*-150) }, false);
+	Event.observe(P('menu-main'), "DOMMouseScroll", function (e) { move_menu_content(Event.wheel(e)*-150) }, false);
+
+	check_imagebox(2,P('chat_channel_1'));
+
+	$$('a.chat_jumper').each(function (s) {
+		s.observe('click',function (event) {
+			if (event.element().hasClassName('chat_jumper')) {
+				check_imagebox(2,event.element());
+				event.element().removeClassName('unread_chat');
+			} else {
+				check_imagebox(2,event.element().up());
+				event.element().removeClassName('unread_chat').up();
+			}
+		});
+	});
+
+	new PeriodicalExecuter(function(pe) {
+		sndchat('');
+	},5);
+	sndchat('');
+	new PeriodicalExecuter(function(pe) {
+		do_clock(P('timer'));
+	},1);
+
+	<? if ($this->user->isVal() || !config()->chat_block) {?>
+		P('enterchat').observe('keyup',function (e) {
+			var KeyID = e.keyCode;
+			if (KeyID == 13) {
+				var text=$F('enterchat');
+				if (!text.blank()) {
+					sndchat(text);
+					P('enterchat').value='';
+				}
+			}
+		});
+		
+		P('chat-img').observe('click', function() {
+			var text=$F('enterchat');
+			if (!text.blank()) {
+				sndchat(text);
+				P('enterchat').value='';
+			}
+		});
+	<? } ?>
+
+	P('info_box').setOpacity(0);
+	change_info("Sveiki prisijungę į agoniją");
+	change_info("<?=Zend_Registry::get('config')->topic?>");
+	new PeriodicalExecuter(function(pe) {
+		var height=P('info_box').getHeight();
+		var height2=P('info').getHeight()-11;
+		if ((height>height2) && (INFO_TIME+5<=time())) {
+			var a=P('info_box').positionedOffset();
+			var top=a[1]*-1;
+
+			var max=height-height2;
+
+			var s=20;
+
+			s=(top+s>max)? max-top : s;
+			s=(top==max)? -1*max-10 : s;
+
+			new Effect.Move(P('info_box'),{ y: -1*s, x:0, duration: 0.4});
+		} else if (height<=height2) {
+			var a=P('info_box').positionedOffset();
+			if (a[1]<10) {
+				new Effect.Move(P('info_box'),{ y: 0, x:0, duration: 0.4, mode: 'absolute' });
+			}
+		}
+	},5);
+	new Ajax.PeriodicalUpdater('online-box', '/ajax/online', {
+		method: 'get', frequency: 30, decay: 1
+	});
+
+	chat_add_channel('_',P('chat_channel_1'), P('ONLINE-1'));
+    chat_add_channel('market_',P('chat_channel_2'), P('ONLINE-2'));
+	chat_add_channel('offtopic_',P('chat_channel_3'), P('ONLINE-3'));
+	<? if ($_SESSION['atag']) { ?>
+		chat_add_channel('C_<?=$_SESSION['atag']?>',P('chat_channel_4'), P('ONLINE-4'));
+	<? } ?>
+	<?//chat_add_channel('all2',P('chat_channel_4'), P('ONLINE-4'));?>
+
+	//smailai
+	<?
+	$smiles=include("app/data/smile_DB.php");
+	foreach ($smiles['out'] as $key => $v) {?>
+		smilein[<?=$key?>]='<?=$smiles['in'][$key]?>';
+		smileout[<?=$key?>]='<?=$v?>';
+	<? } ?>
+
+	VERSION='<?=Zend_Registry::get('config')->version?>';
+	VERSION2=<?=(Zend_Registry::get('config')->script+Zend_Registry::get('config')->css)?>;
+	content('/page/index');
+	
+	bar_hp = new nwBar(P('bar_hp'), 0, 100, { barImg : '/img/bar/status_red.png', bg: '/img/bar/status_black.png', width:160 } );
+	bar_exp = new nwBar(P('bar_exp'), 0, 100, { barImg : '/img/bar/status_yellow.png', bg: '/img/bar/status_black.png', width:160 } );
+	bar_mana = new nwBar(P('bar_mana'), 0, 100, { barImg : '/img/bar/status_blue.png', bg: '/img/bar/status_black.png', width:160 } );
+	bar_work = new nwBar(P('bar_work'), 0, <?=config()->max_time?>, { barImg : '/img/bar/status_grey.png', bg: '/img/bar/status_black.png', width:160 } );
+	
+	$('#bar_hp').mouseover(function () {
+		overlib('Gyvybės: ' + bar_hp.value + '/' + bar_hp.max);
+	}).mouseout(nd);
+	
+	$('#bar_exp').mouseover(function () {
+		overlib('Patirtis: ' + bar_exp.value + '/' + bar_exp.max);
+	}).mouseout(nd);
+	
+	$('#bar_mana').mouseover(function () {
+		overlib('Energija: ' + bar_mana.value + '/' + bar_mana.max);
+	}).mouseout(nd);
+	
+	$('#bar_work').mouseover(function () {
+		overlib('Veikla: ' + bar_work.value + '/' + bar_work.max);
+	}).mouseout(nd);
+});
+</script>
+</head><?="\n"?>
+<body style="overflow:hidden;"><?="\n"?>
+<img src="/img/quick_sell.png" border="0" width="24" height="24" alt="" id="SELL_IMG" style="display:none;position:absolute;z-index:10" />
+<div id="header2">
+	<div id="stat_box">
+		<div style="font-size:18px;font-weight:bold"><?=$this->name?></div>
+		<div>Lygis: <span id="sensor_lvl"><?=$this->lvl?></span></div>
+		<div>Rasė: <?=($this->race==RACE_MAN)? "Žmogus" : "Rjalas";?></div>
+		<div>Agonų: <span id="sensor_money"><?=$this->money?></span></div>
+		<div class="pointer" onclick="content('/page/nano');" style="color:#FF0000">Nano kreditų: <span id="sensor_nano"><?=$this->nano?></span></div>
+		<div id="bar_hp"></div>
+		<div id="bar_exp" style="margin-top:6px"></div>
+		<div id="bar_mana" style="margin-top:6px"></div>
+		<div id="bar_work" style="margin-top:6px"></div>
+	</div>
+	<div id="menu_box">
+        <a href="/main/logout"><img alt="logout" title="atsijungti" src="/img/logout.png" /></a>
+		<a target="_blank" href="http://help.agonija.eu"><img alt="help" title="pagalba" src="/img/help.png" /></a>
+		<img alt="refresh" title="atnaujinti" src="/img/refresh.png" onclick="Crefresh()" />
+		<img alt="nustatymai" title="nustatymai" src="/img/settings.png" onclick="content('/page/settings');" />
+	</div>
+	<div id="menu-left" class="pointer">&nbsp;</div>
+	<div id="menu-main">
+		<ul id="menu-main-links">
+			<li><img class="pointer" alt="pagrindinis" title="pagrindinis" src="/img/home.png" onclick="content('/page/index');" /><br />Pagrindinis</li>
+			<li><img class="pointer" alt="įgūdžiai" title="įgūdžiai" src="/img/skill.png" onclick="content('/page/skill');" /><br />Įgūdžiai</li>
+			<li><img class="pointer" alt="inventorius" title="inventorius" src="/img/item.png" onclick="content('/page/item');" /><br />Inventorius</li>
+			<li><img class="pointer" alt="darbas/medžioklė" title="darbas/medžioklė" src="/img/chest.png" onclick="content('/page/work');" /><br />Veikla</li>
+			<li><img class="pointer" alt="įvykiai" title="įvykiai" src="/img/event.png" onclick="content('/page/event');" id="event-icon" /><br />Įvykiai</li>
+			<li><img class="pointer" alt="asmeninės žinutės" title="asmeninės žinutės" src="/img/PM.png" onclick="content('/page/PM');" id="pm-icon" /><br />PM</li>
+			<li><img class="pointer" alt="užpulti kitą žaidėją" title="užpulti kitą žaidėją" src="/img/atack.png" onclick="content('/page/atack');" /><br />Kariavimas</li>
+			<li><img class="pointer" alt="arena" title="arena" src="/img/arena.png" onclick="content('/page/arena');" /><br />Arena</li>
+			<li><img class="pointer" alt="TOP" title="TOP" src="/img/top.png" onclick="content('/page/top');" /><br />TOP</li>
+			<li><img class="pointer" alt="turgus" title="turgus" src="/img/market.png" onclick="content('/page/market');" /><br />Turgus</li>
+			<li><img class="pointer" alt="ligoninė" title="ligoninė" src="/img/hospital.png" onclick="content('/page/hospital');" /><br />Ligoninė</li>
+			<li><img class="pointer" alt="forumas" title="forumas" src="/img/forum.png" onclick="content('/page/forum');" /><br />Forumas</li>
+			<li><img class="pointer" alt="Santykiai" title="Santykiai" src="/img/social.png" onclick="content('/page/social');" /><br />Santykiai</li>
+			<li><img class="pointer" alt="klanas" title="klanas" src="/img/clan.png" onclick="content('/page/clan');" /><br />Klanas</li>
+			<li><img class="pointer" alt="Parduotuvė" title="parduotuvė" src="/img/shop.png" onclick="content('/page/shop');" /><br />Parduotuvė</li>
+            <li><img class="pointer" alt="Pranešimai" title="pranešimai" src="/img/report.png" onclick="content('/page/report');" /><br />Pranešti</li>
+			<li><img class="pointer" alt="Misijos" title="miijos" src="/img/mission.png" onclick="content('/page/mission');" /><br />Misijos</li>
+			<li><img class="pointer" alt="Bugenhagenas" title="Bugenhagenas" src="/img/workshop.png" onclick="content('/page/workshop');" /><br />Bugenhagenas</li>
+		</ul>
+	</div>
+	<div id="menu-right" class="pointer">&nbsp;</div>
+	<div id="info">
+		<div id="info_box">&nbsp;</div>
+	</div>
+	<div id="info2">
+		<div id="timer">-- : -- : --</div>
+		<a onclick="content('/page/online');"><div id="online-box" style="color:#FFFFFF;text-align:center;font-size:24px;font-weight:bold">?</div><div style="font-size:11px;text-align:center">prisijungę</div></a>
+	</div>
+</div>
+<div id="Content">Kraunama. Jeigu šią žinutę matote ilgiau kaip 5s, pasitikrinkite ar jūsų naršyklė palaiko JavaScript</div>
+<div id="chat_box">
+	<div id="chat_main_box">
+		<div id="chatfrm">
+			<div class="chat_slide" id="chat_slide_1">Kraunasi...</div>
+			<div class="chat_slide" id="chat_slide_2">Kraunasi...</div>
+			<div class="chat_slide" id="chat_slide_3">Kraunasi...</div>
+			<div class="chat_slide" id="chat_slide_4">Kraunasi...</div>
+		</div>
+	</div>
+	<div id="chatchannel" style="font-size:12px">
+		<?//<a href="http://help.agonija.eu/index.php?title=Taisykl%C4%97s" target="_blank">Taisykles</a>|?>
+        <img class="pointer" src="/img/smile/).gif" height="12" width="12" onclick="P('smilebox').toggle();" /> |
+		<a href="http://help.agonija.eu/index.php?title=Taisykl%C4%97s" style="font-weight: bold;color:red" target="_blank">Taisyklės</a> |
+        <a class="chat_jumper" id="chat_channel_1" rel="chat_slide_1" onclick="window.CHAT_CHANNEL_ID=1; window.CHAT_CHANNEL=''; sndchat('');">Pagr. (<span id="ONLINE-1">?</span>)</a>
+        |
+		<a class="chat_jumper" id="chat_channel_2" rel="chat_slide_2" onclick="window.CHAT_CHANNEL_ID=2; window.CHAT_CHANNEL='channel=market'; sndchat('');">Turgus (<span id="ONLINE-2">?</span>)</a>
+		|
+		<a class="chat_jumper" id="chat_channel_3" rel="chat_slide_3" onclick="window.CHAT_CHANNEL_ID=3; window.CHAT_CHANNEL='channel=offtopic'; sndchat('');">Blevyzgos (<span id="ONLINE-3">?</span>)</a>
+		|
+		<? if (@$_SESSION['atag']) { ?>
+			<a class="chat_jumper" id="chat_channel_4" rel="chat_slide_4" onclick="window.CHAT_CHANNEL_ID=4; window.CHAT_CHANNEL='alliance=true'; sndchat('');">Klanas (<span id="ONLINE-4">?</span>)</a>
+			|
+		<? } ?>
+		<?//<a class="chat_jumper" id="chat_channel_4" rel="chat_slide_4" onclick="window.CHAT_CHANNEL_ID=4; window.CHAT_CHANNEL='json=1&amp;all2=true'; sndchat('');">Bendras (<span id="ONLINE-4">?</span>)</a> ?>
+	</div>
+	<div id="chatinput">
+		<? if ($this->user->isVal() || !config()->chat_block) {  ?>
+			<input type="text" id="enterchat" />
+			<img src="/img/chat.png" id="chat-img" />
+		<? } else { ?>
+			<i>Nepatvirtinus pašto adreso rašyti draudžiama</i>
+		<? } ?>
+	</div>
+</div>
+
+<div id="smilebox" style="display:none">
+	<?
+	$data=include("app/data/smile_DB.php");
+	foreach ($data['out'] as $key => $v) {?>
+		<div onmousemove="P('smail_code').update('<?=$data['in'][$key]?>');" class="smailas" onclick="smileadd('<?=$data['in'][$key]?>'); P('smilebox').hide();"><?=$v?></div>
+	<? } ?>
+	<?=$this->clear("both");?>
+	<div style="font-size:9px;color:white" id="smail_code">&nbsp;</div>
+</div>
+
+</body><?="\n"?>
+</html>

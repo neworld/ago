@@ -1,0 +1,53 @@
+<?=$this->goodOrBad($this->good,$this->bad);?>
+<? list($job, $left) = $this->user->uzimtumas('hospital');
+if ($job && $left) {
+    echo $this->workImg($job, $left);
+} else {?>
+
+<?=$this->tip("
+	Šioje vietoje jūs galite pagydyti savo veikėją. Gydytojų pasirinkinimas nėra
+	didelis, tačiau čia surinkti profesionalai, kuriuos galima surasti fronte.
+	Visi gydytojai yra žmonės, tačiau norėdami išlikti yra priversti gydyti ir rjalus.
+");?>
+
+<?=$this->tip("
+	Rinkitės vieną iš gydytojų:
+");?>
+<input type="hidden" id="doctor-sel" value="-1">
+<?
+foreach ($this->doctors as $key => $v) {
+	if ($v['lvl']<=$this->user->getlvl()) {
+		$text="<div style=\"font-weight:bold\">{$v['name']}</div>";
+		$text.="<div>Minimalus lygis: <b>{$v['lvl']}</b></div>";
+		$text.="<div>Atstato gyvybių per minutę: <b>{$v['hp']}</b></div>";
+		$text.="<div>Vienos minutės kaina: <b>{$v['cost']}</b></div>";
+		$text.="<div style=\"margin-top:7px;width:250px;\">{$v['apie']}</div>";
+
+		$imgk=$key;
+		?>
+		<div class="pointer" id="doctor-<?=$key?>" style="font-weight:bold;text-align:center;border:solid 1px #1F354C;margin:10px;padding:10px;display:block;float:left">
+			<img src="/img/doctor/<?=$imgk?>.png" /><br />
+			<?=$v['name']?>
+		</div>
+		<?=$this->run("
+			new Overlib('$text',P('doctor-$key'));
+			P('doctor-$key').observe('click',function () {
+				check_imagebox(20,P('doctor-$key'));
+				P('doctor-sel').value=$key;
+				P('doctor-cost').update({$v['cost']});
+				P('doctor-hp').update({$v['hp']});
+			});
+		");?>
+	<? } ?>
+<? } ?>
+<?=$this->clear("both");?>
+<div>
+	Pas šį gydytoją 1 minutė kainuoja:
+	<b id="doctor-cost">0</b>
+	Gydimo sparta:
+	<b id="doctor-hp">0</b><br />
+	Jūs norite gydytis:
+	<input type="text" id="doctor-time" value="10" size="3" maxlength="3">min
+	<input type="button" value="Gydytis" onclick="content('/page/hospital',{ doctor : $F('doctor-sel'), time : $F('doctor-time') }, no);">
+</div>
+<?	} ?>

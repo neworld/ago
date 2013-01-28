@@ -1,0 +1,27 @@
+<?=$this->goodOrBad($this->good, $this->bad)?>
+
+<?=$this->tip("
+	Čia jūs galite pranešti administracijai apie tam tikrus įvykius žaidime. Administracija pirmiausia
+	nagrinės skundus, prašymus ir t.t. parašytus šioje formoje. Administracija pasilieka teisę, net neskaityti
+	skundų bei pasiulymų parašytų privačių žinučiu forma.<br /><br />
+
+	Administracija garantuoja jūsų privatumą, tad galite drąsiai pranešti apie vartotojo taisyklių pažeidimus<br />
+	Jeigu turite vaizdinių įrodymų, juos reikia talpinti atskiruose serveriuose (rekomenduoju http://www.ipix.lt)
+");?>
+
+<select id="tipas" style="width:480px">
+	<? foreach ($this->tipai as $key => $v) {?>
+		<option value="<?=$key?>"><?=$v?></option>
+	<? } ?>
+</select> <br />
+
+<textarea id="zinute" rows="8" style="width:480px">
+</textarea><br />
+
+<input type="button" value="Pranešti" id="ok" style="width:480px" />
+
+<? $this->run("
+	P('ok').observe('click', function () {
+		content('/page/report', { 'ok' : 1, 'tipas': \$F('tipas'), 'zinute' : \$F('zinute')}, no);
+	});
+");?>

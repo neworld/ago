@@ -1,0 +1,135 @@
+<?=$this->goodOrBad(null,$this->error)?>
+<form action="" method="post" enctype="multipart/form-data">
+	<h3 class="title">Vartotojo vardas</h3>
+	<input type="text" name="name" id="name" value="<?=$this->name?>" size="30" title="Vartotjo vardas" /> <img class="check_indicator" id="name_status" />
+	<?=$this->goodOrBad(null,$this->error_name)?>
+	<h3 class="title">Slaptažodis</h3>
+	<input type="password" name="psw1" id="psw1" value="<?=$this->psw?>" size="26" title="Slaptažodis" /> 
+	<input type="password" name="psw2" id="psw2" value="<?=$this->psw?>" size="26" title="Slaptažodis" /> <img class="check_indicator" id="psw_status" />
+	<?=$this->goodOrBad(null,$this->error_psw)?>
+	<h3 class="title">Pašto adresas</h3>
+	<input type="text" name="mail" id="mail" value="<?=$this->mail?>" size="30" title="Pašto adresas" /> <img class="check_indicator" id="mail_status" /> 
+	<?=$this->goodOrBad(null,$this->error_mail)?>
+	<h3 class="title">Rasė</h3>
+	<div>Gerai apsispręskite, nes vėliau savo sprendimo negalėsite pakeisti</div>
+	<div style="margin-top:30px">
+		<div class="imagebox pointer" id="rjal_box"><img src="/img/rjal.jpg" style="width:210px;height:210px" alt="rjalas" /><br /><br />Rjalas</div>
+		<div class="imagebox pointer" id="man_box"><img src="/img/man.jpg" style="width:210px;height:210px" alt="žmogus" /><br /><br />Žmogus</div>
+	</div>
+	<?=$this->goodOrBad(null,$this->error_race)?>
+	<h3 class="title">Žaidimo nuostatos</h3>
+	<div id="terms">
+		<h3>1. Žaidimo savokos</h3>
+		<h4>1.1 Žaidimas</h4>
+		<div>Žaidimas "Agonija" yra nemokamas internetinis žaidimas. Registracija žaidime yra visiškai nemokama ir norint užsiregistruoti tereikia sutikti su šiomis taisyklėmis.</div> 
+	   	<h4>1.2 Žaidėjai</h4>
+	   	<div>Užsiregistravęs žaidime asmuo tampa žaidimo žaidėju. Kiekvienas asmuo viename žaidimo pasaulyje gali būti užsiregistravęs tik vieną kartą.</div>
+	   	<h3>2. Bendrosios nuostatos</h3>
+	   	<h4>2.1. Vieno asmens kelios registracijos</h4> 
+	   	<div>Jei asmuo užsiregistruoja į tą patį žaidimo pasaulį daugiau nei vieną kartą ir žaidžia žaidimą už kelis žaidėjus, visos jo registracijos bus panaikintos be jokio išankstinio perspėjimo. Bausmė galioja visiems žaidėjams, nesvarbu, ar žaidėjo lygis yra 1, ar 2000.</div>
+	   	<h3>2.2. Žaidėjai, žaidžiantys žaidimą prie to paties kompiuterio </h3>
+	   	<div>Du žaidėjai vienu metu gali žaisti prie vieno kompiuterio, tačiau jie privalo kuo skubiau pranešti apie tai administracijai (admin@agonija.eu). Šie du žaidėjai tarpusavyje negalės dalintis niekuo. Be to jiems draudžiama abiems pulti tą patį žmogų.</div>
+	   	<h4>2.3. Botai</h4>
+	   	<div>Botais yra laikomi automatiniai skriptai, sukurti žaidėjo, kurie simuliuoja aktyvumą žaidime ar atlieka bet kokius kitus veiksmus vietoj žaidėjo. Botų naudojimas žaidime yra griežtai  draudžiamas. Žaidėjai bus šalinami be perspėjimo.</div>
+	   	<h4>2.4. Įžeidimai bei grasinimai</h4>
+	   	<div>Grasinimai ar įžeidinėjimai yra visiškai netoleruojami žaidime. Grasinti galima tik žaidimo turtu, t.y. administracija toleruos grasinimus nukreiptus prieš veikėja (ne prieš žaidėją) ar prieš kitą anklavą (o ne prieš to anklavo žaidėjus)</div>
+	   	<h4>2.5. Reklama</h4>
+	   	<div>Bet kokia reklama, nesuderinta su administratoriais, yra draudžiama bet kokia forma (net ir informacijos apie klaną ar miestą laukeliuose, pavadinimuose ir varduose), nesvarbu ar reklama yra tekstinio pobūdžio, vizuali, ar garsinė.</div>
+	   	<h4>2.6. Žaidimo klaidos</h4>
+	   	<div>Klaida žaidime yra laikoma spraga žaidimo kode, leidžianti žaidėjui ja pasinaudoti su tikslu pagerinti žaidimo sąlygas sau arba pakenkti kitiems žaidėjams ar sukelti grėsmę žaidimo stabilumui. Visas klaidas būtina pranešti administracijai (admin@agonija.eu. Už klaidų naudojimą bus naikinamos vartotojų registracijos. Klaidas pranešusieji gali būti dosniai apdovanoti (jeigu klaida tikrai rimta)</div>
+	   	<h4>2.7. Draudžiami veiksmai</h4>
+	   	<div>Be aukščiau nurodytų nusižengimų, taip pat yra baudžiama ir už šiuos veiksmus:</div>
+	   	<ul>
+	   	  <li>registruotis kelis kartus su tikslu šnipinėti kitus žaidėjus;</li>
+	   	  <li>bandymas reikalauti administratoriaus, kad šis suteiktų žaidėjui išskirtinių teisių žaidime;</li>
+	   	  <li>bandymas gauti kito žaidėjo konfidencialią informaciją (pavyzdžiui, slaptažodį); </li>
+	   	  <li>bandymas žaisti iš to paties kompiuterio naudojant IP slėpimo programas arba proxy serverius;</li>
+	   	  <li>nešvankios ar įžeidžiančio turinio informacijos vartojimas žaidime.</li>
+	   	  <li>Draudžiame teršti chat'ą</li>
+	   	</ul>
+	   	<h4>2.8. Nusižengimų pasekmės</h4>
+	   	<div>Nusižengimų pasekmės gali būti tokios:</div>
+	   	<ul>
+	   		<li>perspėjimas;</li>
+	   		<li>laikinas arba ilgalaikis draudimas rašyti žinutes žaidime;</li>
+	   		<li>laikinas draudimas prisijungti prie žaidimo;</li>
+	   		<li>žaidėjo registracijos panaikinimas.</li>
+	   		<li>atimti dalį virtualaus turto</li>
+	   	</ul>
+	   	<div>Administratorius aptikęs pažeidimą privalo perspėti privačia žinute žaidime, o įvykdęs nuosprendį privalo apie tai pranešti elektroniniu laišku, tik tuo atveju, jeigu žaidėjas buvo patvirtinęs savo pašto adreso galiojimą.</div>
+	   	<h4>2.9. Administratoriaus sprendimai</h4>
+	   	<div>Administratoriaus numatyta bausmė gali būti atšaukta tik paties administratoriaus. Administratoriaus sprendimas nubausti žaidėją yra galutinis ir neginčijamas. </div> 
+        <h3>3. Pranešimai apie pažeidimus</h3>
+        <div>Pranešti apie žaidėjo draudžiamą veiklą galima el. paštu admin@agonija.eu. Jei paaiškėja, kad pranešimas buvo klaidingas, su tikslu pakenkti kitam žaidėjui, pranešęs žaidėjas bus nubaustas. </div>
+        <h3>4. Kompensacija</h3>
+        <div>Žaidėjo, nusižengusio šioms taisyklėms, registraciją panaikinus, jokia kompensacija už iki tol žaidime sukauptą ar įsigyta turtą (realiais agonais) grąžinama ar perkeliama kitam žaidėjui nebus.</div>
+        <h3>5. "Agonija" komanda ir jos atsakomybė</h3>
+        <div>"Agonija" komandą sudaro žaidimo kūrėjai, administratoriai bei kiti asmenys tiesiogiai prisidėję prie žaidimo kūrimo bei palaikymo. </div>
+        <div>Komanda:</div>
+        <ul>
+        	<li>neatsako už bet kokią turtinę ar neturtinę žalą, kurią tiesiogiai ar netiesiogiai padarė šis žaidimas vartotojui;</li> 
+			<li>neatsako už kitas problemas, galimai kilusias dėl žaidimo kaltės;</li> 
+			<li>pasilieka teisę atlikti žaidimo taisymo, koregavimo, atnaujinimo, techninės profilaktikos darbus be išankstinio perspėjimo;</li> 
+			<li>pasilieka teisę keisti šias taisykles prieš tai informavus žaidėjus el.paštu tik tuo atveju, jeigu žaidėjas buvo patvirtinęs savo pašto adreso</li> 
+			<li>pasilieka teisę uždrausti vienas, keliems ar visiems žaidėjams prisijungti, jei tai yra būtina. Tai galioja tiek techninės profilaktikos metu, tiek nenumatytais avariniais atvejais.</li>
+			<li>niekados neprašys slaptažodžio. Keigu komandai jo reikėtų, jie galėtų be vargo pasikeisti į kitą, iš anksto suderinę su žaidėju;</li>
+			<li>komanda užtikrina visomis įmanomis priemonėmis saugoti žaidėjų privatumą;</li>
+			<li>jūsų privatūs duomenys gali būti atskleisti policijai, bei kitoms kompetetingoms institicujomis, jeigu jos pateiks duomenų būtinumo dokumentus</li>
+		</ul>
+		<h3>6. Kontaktai</h3>
+		<div>Vienintelis oficialus el.pašto adresas, kuriuo galima susisiekti su administratoriumi yra admin@agonija.eu. Taip pat galima išdėstyti savo problemas forume. Bet kuriuo atveju administratorius neprivalo reaguoti į iškeltus klausimus ar problemas, kurių atsakymą galima rasti žaidimo pagalbos skiltyje arba apie kurias jau buvo diskutuota forume. </div>
+		<h3>7. Baigiamosios nuostatos</h3>
+		<ul>
+			<li>Spausdamas mygtuką "Sutinku", asmuo patvirtina, kad susipažino su bendromis "Agonija" naudojimosi taisyklėmis ir privatumo politika, su šiomis žaidimo taisyklėmis, su jomis sutinka ir jomis vadovausis.</li> 
+			<li>Žaidėjas privalo kreipti dėmesį į bet kokį taisyklių pasikeitimą.</li> 
+			<li>Taisyklių nežinojimas neatleidžia nuo atsakomybės.</li> 
+			<li>Žaidėjas prisiima pilną atsakomybę už jo paties paskelbtą turinį žaidime.</li> 
+			<li>Visos žaidimo teisės priklauso neworld.</li>
+		</ul>	   	    
+	</div>
+	<div>Sutinku su žaidimo nuostatomis: <input type="checkbox" name="terms" id="accept" value="yes" title="Sutinku"<?=($this->terms=='yes')? ' checked="checked"' : '' ?> /></div>
+	<?=$this->goodOrBad(null,$this->error_terms)?>
+	<h3 class="title">Apsauga nuo robotų</h3>
+	<img src="/capcha.png" alt="capcha kodas" />
+	<div>Prašome suvesti auksčiau esančius 6 skaitmenis: <input value="<?=$this->capcha?>" type="text" name="capcha" size="6" maxlength="6"   title="capcha kodas" /></div>
+	<?=$this->goodOrBad(null,$this->error_capcha)?>
+	<div style="text-align:center;margin-top:30px;"><input type="submit" name="submit" id="registruotis" value="Registruotis" style="text-alin:center" /></div> 
+	<input type="hidden" name="race" id="race" value="-1" />
+</form>
+
+<script type="text/javascript">
+	<? if ($this->race==RACE_MAN) {
+		echo "check_imagebox(1,P('man_box'));\nP('race').value=0;";
+	} elseif ($this->race==RACE_RJAL) {
+		echo "check_imagebox(1,P('rjal_box'));\nP('race').value=1;";
+	}
+	?>
+	new Overlib('Rjalai turi daugiau jėgų, todėl dažniausiai kariauja su šaltaisiais ginklais',P('rjal_box'));
+	new Overlib('Žmonės turi mažiau jėgų negu rjalai, tačiau yra taiklesni bei gudresni',P('man_box'));
+	
+	P('rjal_box').observe('click',function (event) {
+		check_imagebox(1,P('rjal_box'));
+		P('race').value=1;
+	});
+	P('man_box').observe('click',function (event) {
+		check_imagebox(1,P('man_box'));
+		P('race').value=0;
+	});
+	
+	P('name').observe('blur',function (event) {
+		if (Event.element(event).value.length>=3) { 
+			checkeris('/ajax/checkname/name/'+Event.element(event).value,P('name_status')); 
+		} else {
+			P('name_status').src='/img/bad.png';
+		}
+	});
+	
+	P('psw2').observe('blur', function (event) {
+		P('psw_status').src=((Event.element(event).value==$F('psw1')) && (Event.element(event).value.length>=3))? '/img/good.png' : '/img/bad.png';
+	});
+	
+	P('mail').observe('blur', function (event) {
+		P('mail_status').src=(check_email(Event.element(event).value))? '/img/good.png' : '/img/bad.png';
+	});
+	
+</script>

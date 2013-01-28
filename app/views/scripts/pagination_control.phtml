@@ -1,0 +1,37 @@
+<?php if ($this->pageCount): ?>
+<div class="paginationControl">
+<!-- Previous page link -->
+<?php if (isset($this->previous)): ?>
+  <a onclick="content('<?= $this->url(array('page' => $this->previous)); ?>');">&lt; Buvęs</a> |
+<?php else: ?>
+  <span class="disabled">&lt; Buvęs</span> |
+<?php endif; ?>
+
+<!-- Numbered page links -->
+<?php foreach ($this->pagesInRange as $page): ?>
+  <?php if ($page != $this->current): ?>
+	<a onclick="content('<?= $this->url(array('page' => $page)); ?>');"><?= $page; ?></a> |
+  <?php else: ?>
+	<?= $page; ?> |
+  <?php endif; ?>
+<?php endforeach; ?>
+
+<!-- Next page link -->
+<?php if (isset($this->next)): ?>
+  <a onclick="content('<?= $this->url(array('page' => $this->next)); ?>');">Kitas &gt;</a>
+<?php else: ?>
+  <span class="disabled">Kitas &gt;</span>
+<?php endif; ?>
+	<? $inputid=@$_SESSION['PAGINATOR_INPUT_ID']; ?>
+	<input id="P-<?=$inputid?>" type="text" value="<?=$this->current?>" size="4" style="font-size:8px;padding:0px;vertical-align: middle; text-align:center" />
+	<? $this->run("
+		P('P-$inputid').observe('keyup',function (e) {
+			var KeyID = e.keyCode;
+			if (KeyID == 13) {
+				pagergo('".$this->url(array( 'page' => 'PP'))."', \$F('P-$inputid'));
+			}
+		});
+	");?>
+</div>
+<?php endif; ?>
+

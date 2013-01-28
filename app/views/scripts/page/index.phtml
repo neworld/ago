@@ -1,0 +1,156 @@
+<?
+$getDMGpersecond1=round($this->user->getDMGpersecond(1),2);
+$getDMGpersecond2=round($this->user->getDMGpersecond(2),2);
+//pirma ranka
+$has_gun=false;
+$gun=$this->user->getitembyplace("GUN_MAIN");
+if ($gun) {
+	$gun_main=$gun->title."<br /><b>".$gun->getDMG().'</b>
+		 (<b>'.$getDMGpersecond1.'</b>)';
+	$has_gun=true;
+	$turi_ginkla_tik_kitoj_rankoj=false;
+} else {
+	$gun_main="Ginklo nėra";
+	$turi_ginkla_tik_kitoj_rankoj=true;
+}
+//antra ranka
+$gun=$this->user->getitembyplace("GUN_SECOND");
+if ($gun) {
+	$gun_second=$gun->title."<br /><b>".$gun->getDMG().'</b>
+		(<b>'.$getDMGpersecond2.'</b>)';
+	$has_gun=true;
+} else {
+	$gun_second="Ginklo nėra";
+	$turi_ginkla_tik_kitoj_rankoj=false;
+}
+//visa kita
+$noarmor=(($this->user->getlvl()>=3) && ($this->user->get_skill_sum("ARMOR")==0));
+$has_gun=$has_gun;
+$turi_ginkla_tik_kitoj_rankoj=$turi_ginkla_tik_kitoj_rankoj;
+$DMG=$this->user->getDMG();
+?>
+<div>
+	<div class="mainbox" style="float:left;width:240px;">
+		<h3>Statistika</h3>
+		<div>Gyvybių per minutę: <b><?=$this->user->HPperstep()?></b></div>
+		<div>Viso ištobulintų įgūdžių: <b><?=$this->user->getskillsum()?></b></div>
+		<div>Liko laiko darbui: <b><?=$this->user->get_max_hunt()?></b> minučių</div>
+		<div>Laimėjote kovų: <b><?=$this->user->getkill()?></b></div>
+		<div>Pralaimėjote kovų <b><?=$this->user->getdead()?></b></div>
+		<div>Šarvai: <b><?=$this->user->get_skill_plus("ARMOR")?></b></div>
+		<div>Žaidėjų kovų būsena: <b><?
+		if ($this->user->gethp()/$this->user->maxhp()<0.2) {
+			echo "Jums agonija";
+		} else {
+			echo ($this->user->candefence())? "Jus gali pulti" : "Jūs ilsitės";
+		}?></b></div>
+		<div>Medžioklės bonusas: <b><?=$this->user->get_hunt_bonus()?></b></div>
+	</div>
+	<div class="mainbox" style="float:left;width:240px;">
+		<h3>Pirma ranka</h3>
+		<div><?=$gun_main?></div>
+		<h3>Antra ranka</h3>
+		<div><?=$gun_second?></div>
+		<h3>Ataka</h3>
+		<div>Bendras galingumas: <b><?=$DMG?></b></div>
+		<div>Bendra žala per sekundę: <b><?=$getDMGpersecond2+$getDMGpersecond1?></b></div>
+	</div>
+	<div class="mainbox" style="float:left;width:450px;">
+		<h3>Pasislėpimas</h3>
+		<? if ($this->user->stance == User::STANCE_HIDDEN) {
+			echo $this->tip("
+				Jūs esate pasislėpęs, taip padidinate savo pasislėpimo įgūdžio reikšmę
+			");
+		} else {
+			if ($this->user->sleft > time()) {
+				?>Liko laukti, kol galėsite pasislėpti: <span id="s-timer">liko</span><?
+				$this->run("
+					new Timer(".($this->user->sleft - time()).", 's-timer', {});
+				");
+			} else {
+				echo $this->tip("
+					Jeigu jus kas nors puldinėja, jūs galite pasislpėti. Tačiau, pasislėpimo lygį nulems jūsų \"Pasislėpimo\"
+					įgūdis. Jeigu jūs bandysite dirbti, medžioti ar pulti kitus žaidėjus, 10 minučių negalėsite nustatyti
+					pasislėpimo būsenos.
+				");
+
+				?><span id="slepimasis"><a id="sleptis">Slėptis</a></span><?
+
+				$this->run("
+					P('sleptis').observe('click', function () {
+						new Ajax.Request('/ajax/hidden', {
+							onComplete: function (DATA) {
+								P('slepimasis').update(DATA.responseText)
+							}
+						});
+					});
+				");
+			}
+		}?>
+	</div>
+	<div class="mainbox" style="float:left;width:450px;">
+		<h3>Saugykla</h3>
+		<?=$this->tip("
+			Tai saugykla, iš kurios pinigų niekas negali atimti. Jūs į šitą saugyklą
+			galite pasidėti pinigus, tačiau tai kainuos 2% komisinio mokesčio. Jug saugumas
+			šioje negailestingoje planetoje reikalauja aukų.
+		");?>
+		<div>Agonos saugykloje: <span id="safe_num_indicator"><?=$this->user->get_safe_money()?></span></div>
+		<div><input type="text" id="safe_num" value="<?=$this->user->get_safe_money()?>" />
+			<input type="button" value="paimti" onclick="transfer_safe()" />
+			<input type="button" value="padėti" onclick="transfer_safe(true)" />
+		</div>
+	</div>
+</div>
+<?=$this->clear("both")?>
+<div class="mainbox" style="width:450px;height:140px;overflow:auto;margin-top:8px;">
+	<h3>Privatus turgus</h3>
+	<?
+	$itemsend=new Itemssend();
+	$items=$itemsend->getItems($this->user->getid(), true);
+	if ($items->count()>0) {
+		foreach ($items as $v) {
+			$color=($v->tipas==1)? "#0E3D05" : "#420000";
+			$item=new Item($v->item);
+			?>
+			<div style="background-color:<?=$color?>">
+				<div style="float:left"><?=($v->tipas==1)? "Jums siųlo" : "Jūs siulote"?> <?=$item->itemLink()?></div>
+				<div style="float:right">
+					<?=($v->tipas==1)?
+						"<a onclick=\"show_pmarket({$v->id});\">Dialogas</a>" :
+						"<a onclick=\"remove_pmarket({$v->id});\">Pašalinti</a>";
+					?>
+				</div>
+			</div>
+			<?=$this->clear("both")?>
+		<? } ?>
+	<? } ?>
+</div>
+<div class="mainbox" style="width:450px;height:140px;overflow:auto;margin-top:8px;">
+	<h3>Prisijungimų istorija</h3>
+	<? foreach ($this->history as $v) { ?>
+	<div>[<?=$v->date?>] ip: <u><?=$v->ip?></u> os: <u><?=$v->os?></u> browser: <u><?=$v->browser?></u></div>
+	<? } ?>
+</div>
+<?=$this->clear("both")?>
+<? if (!$has_gun) {
+	echo $this->tip("
+		Jūs neturite jokio ginklo, o be ginklo jūs nedarote jokios žalos, todėl esate pažeidžiamas
+		Norėdami užsidėti ginklą nueikite į inventorių <img src=\"/img/item.png\">, paspauskite ant ginklo, ir atsidariusiame menu
+		spustelėkite ant \"perkelti\". Jeigu inventoriuje neturite jokio ginklo, tada jums teks jį nusipirkti. Nueikite į turgų
+		<img src=\"/img/market.png\">, viršuje pasirinktite tipą \"Ginklas\" ir spauskite filtruoti. Šiek tiek žemiau susiraskite jums tinkanti ginklą.
+		Jeigu Jūs ginklui neturite agonų, teks juos užsidirbti. Spaudžiate <img src=\"/img/chest.png\">, pasirinkite darbą, ir nurodykite kiek laiko dirbsite.
+		Jeigu neturi laiko darbui, teks laukti 6:00 arba 18:00 kad pasipildytų jūsų darbo laikas
+	");
+} elseif ($turi_ginkla_tik_kitoj_rankoj)  {
+	echo $this->tip("
+		Jūs turite ginklą tik antroje rankoje. Antroje rankoje ginklas daro tik 70% žalos, tad labai rekomenduoju šį ginklą perkelti į pagrindinę ranką
+	");
+} elseif ($noarmor) {
+	echo $this->tip("
+		Jūsų lygis yra 3, o jūs dar šarvų neturite. Pats metas būtų susirūpinti. Pasižiūrėkite savo inventoriuje <img src=\"/img/item.png\">, ir jeigu
+		turite rūbų, būtinai juos užsidėkite (paspauskite ant daikto, ir spauskite perkelti). Jeigu neturi nė vieno daikto, teks šarvus pirkti turguje
+		<img src=\"/img/market.png\">.
+	");
+}
+?>

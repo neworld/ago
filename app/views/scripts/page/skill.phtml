@@ -1,0 +1,47 @@
+<div>
+<?	foreach ($this->data as $key => $v) {
+	$this->run("
+		P('skill_$key').observe('click',function() {
+			check_imagebox(28,P('skill_$key'));
+			show_hide(28,P('skill_window_$key'));
+		})");
+?>
+	<a rel="skill_window_<?=$key?>" class="pointer skill_head" style="display: inline" id="skill_<?=$key?>"><?=$v['NAME']?></a>
+<? } ?>
+</div>
+<div style="display:block;margin-top:16px;border:solid 1px #1F354C;width:<?=($this->screen->width-26)?>px;height:<?=($this->screen->height-60)?>px;overflow:hidden;">
+	<div id="boxaseris" style="width:<?=(($this->screen->width-21)*count($this->data))?>px;height:<?=($this->screen->height-60)?>px;">
+		<? foreach ($this->data as $key => $v) { ?>
+			<div id="skill_window_<?=$key?>" class="skill_window" style="display:none;width:<?=($this->screen->width-50)?>px;height:<?=($this->screen->height-75)?>px;overflow:auto">
+				<? foreach ($v['SKILL'] as $skill_key => $skill) {?>
+					<div class="skill_box" id="skill_box_<?=$skill_key?>">
+						<div class="skill_1_piece">
+							<div class="skill_title"><?=$skill->name?></div>
+							<div class="skill_apie"><?=$skill->apie?></div>
+							<div class="skill_info">
+								Ištobulinta: <b id="skill_<?=$skill_key?>_lvl"><?=$skill->lvl?></b>
+								Maksimalus lygis: <b id="skill_<?=$skill_key?>_max"><?=$skill->max?></b>
+								Gauta iš daiktų: <b><?=$skill->plus?> </b>
+								Sekančio tobulinimo kaina: <b id="skill_<?=$skill_key?>_cost"><?=$skill->cost?></b>
+							</div>
+						</div>
+						<div style="display:block;float:left">
+							<a class="skill_button" onclick="upgrade_skill('<?=$skill_key?>');">Tobulinti</a>
+							<a class="skill_button2" onclick="upgrade_skill('<?=$skill_key?>',true);">Pamiršti</a>
+						</div>
+						<?=$this->clear("both")?>
+					</div>
+				<? } ?>
+			</div>
+		<? } ?>
+	</div>
+</div>
+
+<? //pagaminam karusele
+reset($this->data);
+$key=key($this->data);
+$this->run("
+	 check_imagebox(28,P('skill_$key'));
+	 show_hide(28,P('skill_window_$key'));
+");
+?>

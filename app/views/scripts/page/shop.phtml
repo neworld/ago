@@ -1,0 +1,24 @@
+<div style="position:absolute;top:12px;left:12px;padding:4px;border:solid 1px #1F354C;background-color:#000000">
+	<img src="/img/salesgirl.png" width="200" height="240" />
+</div>
+<div style="position:absolute;top:12px;left:244px;right:12px">
+	Tai pogrindinė parduotuvė, kurioje prekiaujama nelegaliais dalykais. Čia jūs galite įsigyti prekių
+	už nano kreditus arba už agonas. Kadangi parduotuvė veikia nelegaliai, tai ir prekės čia labai
+	brangios. Kas nakt atvežama naujų prekių. Pardavėja: Sara Rion
+</div>
+<div style="position:absolute;top:270px;border:solid 1px #1F354C;font-size:16px;padding:6px;">
+	<? foreach($this->data as $v) {
+		$item=new Item($v->item);
+		$src=$item->img;
+		if (!$src) {
+			$src="/img/item/no-item.png";
+		} else {
+			$src="/img/item/$src.png";
+		}
+		?><img id="ITEM-<?=$v->id?>" class="item_drag pointer" alt="ITEM" style="width:42px;height:42px;" src="<?=$src?>" /><?
+		$this->run("new Overlib('".$this->itemOverDiv($item)."<div style=\"font-weight:bold;font-size:16px\">Kaina: {$v->nano} nano kreditų<br />{$v->money} agonų</div>',P('ITEM-{$v->id}'));");
+		$this->run("P('ITEM-{$v->id}').observe('click',function () {
+			shop_buy({$v->id},{$v->nano},{$v->money});
+		});");?>
+	<? } ?>
+</div>

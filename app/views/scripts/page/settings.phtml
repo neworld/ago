@@ -1,0 +1,125 @@
+<?=$this->goodOrBad($this->good,$this->error)?>
+
+<div style="border:solid 1px #1F354C;margin:10px;padding:5px">
+<h3 class="title">Naujas slaptažodis</h3>
+<div style="font-size:10px">Įveskite jeigu norite pakeisti dabartinį</div>
+<input type="password" name="psw1" id="psw1" size="26" title="Slaptažodis" />
+<input type="password" name="psw2" id="psw2" size="26" title="Slaptažodis" /> <img class="check_indicator" id="psw_status" />
+<?=$this->goodOrBad(null,$this->error_psw)?>
+
+
+<h3 class="title">Pašto adresas</h3>
+<input type="text" name="mail" id="mail" value="<?=($this->data->new_mail)? $this->data->new_mail : $this->data->mail?>" size="30" title="Pašto adresas" /> <img class="check_indicator" id="mail_status" />
+<? if ($this->data->val) {  ?>
+	<input type="button" name="val" id="val" value="Patvirtinti" title="patvirtinti pašto adresą" onclick="content('<?=$this->url(array())?>',{ val : 1 , mail : $F('mail')},no);" />
+	<? if ($this->data->new_mail) { ?>
+		<?=$this->tip("
+			Kolkas galioja jūsų senasis pašto adresas ({$this->data->mail}), tol kol jūs patvirtinsite naująjį.
+		")?>
+	<? } else { ?>
+		<?=$this->tip("
+			Jūs neesate pasitvirtinęs pašto adreso, todėl jūs negalite atkurti slaptažodžio, negauti svarbių naujienų iš žaidimo, bei netenkate kai kurių kitų svarbių galimybių.
+		");?>
+	<? } ?>
+<? } ?>
+<?=$this->goodOrBad(null,$this->error_mail)?>
+
+<h3 class="title">Vardas</h3>
+<div style="font-size:10px">Nebūtinas</div>
+<input type="text" name="vardas" id="vardas" size="26" title="Vardas" value="<?=$this->data->vardas?>" />
+
+<h3 class="title">Lytis</h3>
+<div style="font-size:10px">Nebūtinas</div>
+<div id="chose_sex">
+	<div id="sex_N" class="sex pointer" onclick="chose_sex('N');">Nenoriu viešinti</div>
+	<div id="sex_V" class="sex pointer" onclick="chose_sex('V');"><img src="/img/male.png" width="42" height="42" title="vyras" /></div>
+	<div id="sex_M" class="sex pointer" onclick="chose_sex('M');"><img src="/img/female.png" width="42" height="42" title="moteris" /></div>
+</div>
+<?=$this->Clear("both");?>
+
+<h3 class="title">Apie save</h3>
+<div style="font-size:10px">Nebūtina. Be to veikia <a href="http://help.neworldwar.com/index.php?title=BBCode" target="_blank">BBcode</a></div>
+<textarea id="about" rows="7" cols="65"><?=$this->data->about?></textarea>
+
+
+<div style="margin-top:30px;"><input type="button" name="submit" id="saugoti" value="saugoti" style="text-align:center" /></div>
+</div>
+
+<div style="border:solid 1px #1F354C;margin:10px;padding:5px">
+<h3 class="title">Atvaizdas</h3>
+<? if ($this->user->img) { ?>
+	<div>Jūsų dabartinis atvaizdas:<br /><?=$this->user->getfotoHTML()?></div>
+<? } else { ?>
+	<div><i>Jūs dar neturi atvaizdo</i></div>
+<? } ?>
+
+<div>
+	<div id="upload_form">
+		<form action="/ajax/foto" method="post" enctype="multipart/form-data" target="upload_target" onsubmit="startfotoUpload()">
+			Keisti atvaizdą: <input name="myfile" type="file" />
+							 <input type="submit" name="submitBtn" value="Įkelti" />
+		</form>
+	</div>
+	<div id="upload_status" style="display:none;color:#FF0000">
+		upload...
+	</div>
+	<iframe id="upload_target" name="upload_target" src="/chat" style="width:0;height:0;border:0px solid #fff;"></iframe>
+</div>
+
+</div>
+
+
+<div style="border:solid 1px #1F354C;margin:10px;padding:5px">
+    Dėmesio, jeigu norite palikti žaidimą, turite galimybę savarankiškai tai atlikti.
+    Tiesiog jums reikia spustelėti šį mygtuką ir duoti sutikimą. Ištrinti žaidėjai
+    atkuriami pirmą kartą ir su 20% patirties bauda, ir tik tada, jeigu žaidėjas
+    buvo didesnio kaip 100 lygio. Jeigu kas nors įsilauš į jūsų vartotoją ir jus ištris,
+    parašykite laišką admin@agonija.eu su įrodymų kad tikrai ne pats ištrynėte ir
+    atkurimas įvyks be jokių baudų.
+    <br />
+    Jeigu tvirtai apsisprendėte su išsitrinimu, labai prašau jūsų, parašykite pranešimą arba
+    laišką, kokios yra priežastys. Niekas nieko nepadaro be klaidų, o jas taisyti dar sunkiau,
+    kai niekas neparodo kur jos. Tai tiek.<br ><br />
+    <a id="delete">Išsitrinti</a>
+</a>
+
+<? $_SESSION['delete-key'] = rand(1,10000);?>
+
+<? $this->run("
+	P('psw2').observe('blur', function (event) {
+		P('psw_status').src=((Event.element(event).value==\$F('psw1')) && (Event.element(event).value.length>=3))? '/img/good.png' : '/img/bad.png';
+	});
+
+	P('mail').observe('blur', function (event) {
+		P('mail_status').src=(check_email(Event.element(event).value))? '/img/good.png' : '/img/bad.png';
+	});
+
+	P('saugoti').observe('click', function () {
+		content(
+			'{$this->url(array())}',
+			{
+				save   : 1,
+				psw1   : \$F('psw1'),
+				psw2   : \$F('psw2'),
+				mail   : \$F('mail'),
+				sex    : SEX,
+				vardas : \$F('vardas'),
+				about  : \$F('about')
+			},
+			no
+		);
+	});
+	chose_sex('{$this->data->sex}');
+    
+    P('delete').observe('click', function () {
+        new Dialogs.confirm(
+            'Ar tikrai norite išsitrinti?',
+            function () {
+                content('/page/settings/delete/' + {$_SESSION['delete-key']});
+            },
+			function () {
+				Dialogs.close();
+			}
+        );
+    });
+"); ?>

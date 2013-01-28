@@ -1,0 +1,80 @@
+<?
+class socialas {
+	var $key;
+	var $value;
+
+	function __construct($key, $value) {
+		$this->key = $key;
+		$this->value = $value;
+	}
+
+	function __toString() {
+		return "{ 'key' : '{$this->key}', 'value' : '{$this->value}'}";
+	}
+}
+
+//iskirstom memberius
+$friend = array();
+$ignore = array();
+foreach ($this->members as $v) {
+	$temp = new socialas($v->id, $v->name);
+	switch ($v->type) {
+		case Social::FRIEND : $friend[] = (string)$temp; break;
+		case Social::IGNORE : $ignore[] = (string)$temp; break;
+	}
+}
+$dataFriend = implode(',', $friend);
+$dataIgnore = implode(',', $ignore);
+?>
+
+<div class="social-box" style="float:left">
+	<div style="text-align:center">
+		<img src="/img/friend.png" border="0" width="64" height="64" alt="draugas" align="center" title="draugų sąašas" />
+	</div>
+	<ul id="social-friend" class="social-list"></ul>
+	<div style="width:100%;padding:8px">
+		<input type="text" style="width:94%" id="social-name-friend" />
+	</div>
+</div>
+
+<div class="social-box" style="float:right">
+	<div style="text-align:center">
+		<img src="/img/ignore.png" border="0" width="64" height="64" alt="blokuotas" style="align:center" title="Išblouotų sąrašas" />
+	</div>
+	<ul id="social-ignore" class="social-list"></ul>
+	<div style="width:100%;padding:8px">
+		<input type="text" style="width:94%" id="social-name-ignore" />
+	</div>
+</div>
+<? $this->run("
+	FRIEND_LIST = new nwList(P('social-friend'), [$dataFriend], { 
+        'adr' : '/ajax/social' , 
+        formatValue : function (value) { 
+            return '<a onclick=\"content(\\'/page/userinfo/name/' + value + '\\')\">' + value + '</a>'; 
+        }
+    });
+	IGNORE_LIST = new nwList(P('social-ignore'), [$dataIgnore], { 
+        'adr' : '/ajax/social' , 
+        formatValue : function (value) { 
+            return '<a onclick=\"content(\\'/page/userinfo/name/' + value + '\\')\">' + value + '</a>'; 
+        } 
+    });
+	P('social-name-friend').observe('keyup',function (e) {
+		var KeyID = e.keyCode;
+		if (KeyID == 13) {
+			if (!\$F('social-name-friend').blank()) {
+				FRIEND_LIST.itemCreate(\$F('social-name-friend'), {'tipas' : ".Social::FRIEND."});
+				P('social-name-friend').value = '';
+			}
+		}
+	});
+	P('social-name-ignore').observe('keyup',function (e) {
+		var KeyID = e.keyCode;
+		if (KeyID == 13) {
+			if (!\$F('social-name-ignore').blank()) {
+				IGNORE_LIST.itemCreate(\$F('social-name-ignore'), {'tipas' : ".Social::IGNORE."});
+				P('social-name-ignore').value = '';
+			}
+		}
+	});
+"); ?>

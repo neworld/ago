@@ -1,0 +1,45 @@
+<div style="border:solid 1px #1F354C;display:block;height:<?=$this->screen->height-51?>px;overflow:auto">
+	<div style="text-align:center;font-weight:bold;font-size:18px"><?=$this->title?></div>
+
+	<? foreach ($this->data as $v) {?>
+		<div style="background-color:#1F354C;margin:4px;border:solid 1px #1F354C;height:20px;margin-top:14px;padding:4px;">
+			<div style="float:left;font-weight:bold">
+				<?=$v->name?>
+				<? if ($v->user==$this->user->getid() || $this->user->isadmin()) {?>
+					<a id="edit_<?=$v->id?>">(Redaguoti)</a>
+					<?=$this->run("
+						new Ajax.InPlaceEditor('edit_box_{$v->id}', '/ajax/editforum/fid/{$v->id}', {
+							cancelControl: 'button',
+							okText: 'Saugoti',
+							cancelText: 'Atšaukti',
+							savingText: 'Aaugoma...',
+							externalControl: 'edit_{$v->id}',
+							externalControlOnly: true,
+							rows: 10,
+							cols: 70,
+							loadTextURL: '/ajax/getforum/fid/{$v->id}',
+							highlightendcolor: '#000000',
+							highlightcolor: '#1F354C'
+						});
+					");?>
+				<? } ?>
+			</div>
+			<div style="float:right;"><?=$v->date?></div>
+		</div>
+		<div id="edit_box_<?=$v->id?>" style="margin:4px;margin-top:-5px;border:solid 1px #1F354C;padding:4px;">
+			<?=$this->formatBBcode($v->text)?>
+		</div>
+	<? } ?>
+</div>
+
+<div style="float:right">
+	<a onclick="content('<?=$this->url(array('subid' => $this->subid, 'page' => 1, 'root' => 0))?>');">Grįžti</a> |
+	<a id="create"><?=($this->user->isVal())? 'Atsakyti' : 'Nepatvirtinote pašto adreso'; ?></a>
+</div>
+<? if ($this->user->isVal())
+	$this->run("
+		P('create').observe('click',function () {
+			show_forum_dialog({$this->subid},{$this->root},'{$this->title}',{$this->cid});
+		});
+	");
+?>

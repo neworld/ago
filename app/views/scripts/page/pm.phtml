@@ -1,0 +1,83 @@
+<div style="border:solid 1px #1F354C;display:block;height:<?=$this->screen->height-51?>px;overflow:auto">
+	<? if ($this->num>0) { ?>
+		<? foreach ($this->data as $item) {?>
+			<div class="pm-row pointer" id="pm-id-<?=$item->id?>" style="margin:4px; <?=($item->read==0)? 'background-color:#1F354C' : '' ?>">
+				<div class="pm-row" style="float:left">
+					<input value="<?=$item->id?>" class="pm-check" type="checkbox" id="pm-ch-<?=$item->id?>">
+					<b class="pm-row"><?=$item->title?></b> Nuo: <?=$item->fromname?>
+					<i class="pm-row">(<?=$item->date?>)</i>
+				</div>
+				<div style="float:right">
+					<a id="pm-delete-<?=$item->id?>">Ištrinti</a> |
+					<a onclick="show_new_pm('<?=$item->fromname?>','<?=$item->title?>',<?=$item->id?>);" id="pm-reply-<?=$item->id?>">Atsakyti</a>
+				</div>
+				<?=$this->clear("both")?>
+			</div>
+		<?}?>
+	<? } else {?>
+		<i>Nėra nei vienos asmeninės žinutės</i>
+	<? } ?>
+</div>
+<div style="float:left">
+	<?=$this->paginationControl($this->paginator, 'Sliding', 'pagination_control.phtml');?>
+</div>
+<div style="float:right">
+	<a id="a-new" onclick="show_new_pm()">Rašyti</a> |
+	<a id="a-select-all">Pažymėti visus</a> |
+	<a id="a-refresh">Pažymėti kaip skaitytus</a> |
+	<a id="a-delete" style="color:#999999">Ištrinti</a> |
+	<a id="a-delete-all" style="color:#999999">Ištrinti visus</a>
+</div>
+
+<?
+$this->run("
+	P('a-select-all').observe('click',function () {
+		\$$('.pm-check').each(function (s) {
+			s.checked=true;
+		});
+	});
+	\$$('.pm-check').each(function (s) {
+		var keys=s.id.split('pm-ch-');
+		var key=keys[1];
+
+		P('pm-id-'+key).observe('click', function (event) {
+			var element = Event.element(event);
+			if (Event.element(event).hasClassName('pm-row'))
+				show_pm(key);
+		});
+
+		P('pm-delete-'+key).observe('click', function () {
+			content('/page/pm/delete/'+key,null,no);
+		});
+
+	});
+	P('a-delete').observe('click', function() {
+		var a=Array();
+		\$$('.pm-check').each(function (s) {
+			if (s.checked)
+				a.push(s.value);
+		});
+		content('/page/pm',{delete2: 1, items : a},no);
+	});
+	P('a-delete-all').observe('click', function() {
+		Dialogs.confirm(
+			'Ar tikrai norite pašalinti visus PM',
+			function () {
+				content('/page/pm',{deleteall : 1},no);
+			},
+			function () {
+				Dialogs.close();
+			}
+		);
+	});
+
+	P('a-refresh').observe('click', function() {
+		var a=Array();
+		\$$('.pm-check').each(function (s) {
+			if (s.checked)
+				a.push(s.value);
+		});
+		content('/page/pm/refresh/1',{items : a},no);
+	});
+");
+?>

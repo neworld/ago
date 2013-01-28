@@ -1,0 +1,10 @@
+<? foreach ($this->data as $v) {?>
+	<div>
+		<h2><?=$v->title?></h2>
+		<ul>
+			<? foreach ($v->items as $item) {?>
+				<li><?=$item?></li>
+			<? } ?>
+		</ul>
+	</div>
+<? } ?>

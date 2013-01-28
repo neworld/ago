@@ -1,0 +1,28 @@
+<?=$this->tip("
+	Lyderis: {$this->leadername}<br />
+	Pavadinimas: {$this->clan->title}<br />
+	Tagas: {$this->clan->tag}<br />
+	Lygis: {$this->clan->lvl}<br />
+	Narių skaičius: {$this->members->count()}
+	Telpa narių: {$this->clan->max_member()}<br />
+");?>
+
+<div style="border:solid 1px #1F354C;margin:10px;padding:8px">
+	<?=$this->formatBBcode($this->clan->info_public)?>
+</div>
+
+<table cellspacing="0" class="forum-topics" style="border:solid 1px #1F354C;width:400px;margin:10px;">
+	<tr>
+		<td><b>Vardas</b></td>
+		<td><b>Lygis</b></td>
+		<td><b>Titulas</b></td>
+	</tr>
+
+	<? foreach ($this->members as $v) { ?>
+		<tr>
+			<td><?=get_status_img($v)?> <?=$this->userLink($v->name,null,$v->name)?></td>
+			<td><?=lvl($v->exp)?></td>
+			<td><?=$v->title?></td>
+		</tr>
+	<? } ?>
+</table>

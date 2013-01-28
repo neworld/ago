@@ -1,0 +1,117 @@
+<?
+function makeImg($work) {
+	switch ($work) {
+		case JOB_HUNT :
+			$img= "<img src=\"/img/Bhunt.png\" />";
+			$text = "Medžioti";
+		break;
+		case JOB_JOB :
+			$img= "<img src=\"/img/Bwork.png\" />";
+			$text = "Dirbti";
+		break;
+		case JOB_EXERCISE :
+			$img= "<img src=\"/img/exercise.jpg\" />";
+			$text = "Treniruotis";
+		break;
+	}
+	
+	$return='<div value="'.$work.'" class="workImg">';
+	$return.=$img;
+	$return.='<div style="font-size:14px;">'.$text.'</div>';
+	$return.='</div>';
+	
+	return $return;
+}
+function makeTime($time) {
+	return "<div class='workTime' value='$time'>$time min.</div>";
+}
+
+$max = 10 * floor($this->maxhunt / 10);
+
+if ($this->work && $this->time) {
+	echo $this->WorkImg($this->work,$this->time);
+} else {	
+	if ($this->maxhunt>0) { ?>
+	
+		<div style="font-size:18px;">
+			Jūs šiuo metu nieko nedirbate.<br />
+			Jūs dar turite <?=$this->maxhunt?> minučių<br />
+			Medžioklės bonusas <?=$this->hunt_bonus?><br />
+		</div>
+		<div style="clear:both;">
+			<? echo makeImg(JOB_JOB); ?>
+			<? echo makeImg(JOB_HUNT); ?>
+			<? //echo makeImg(JOB_EXERCISE); ?>
+		</div>
+		<div style="clear:both"></div>
+		<div id="work-laikas"></div>
+		<div id="work-laikas-display"></div>
+		<div style="clear:both"></div>
+		<div id="work-button" class="mainBox mainBoxHover">Veikti</div>
+		
+		<? $this->run('
+			$(".workImg")
+				.autoCheck("WORK_CHOOSE","workImgChecked")
+				.disableTextSelect()
+				.click(function () {
+					$("#work-laikas").show();
+					$("#work-laikas-display").show();
+					$("#work-button").show().disableTextSelect();
+				});
+				
+			$("#work-laikas").slider({
+				orientation: "horizontal",
+				range: "min",
+				max: '.$max.',
+				value: 10,
+				step: 10,
+				min: 10,
+				slide: refreshSwatch,
+				change: refreshSwatch
+			});
+				
+			$(".workTime")
+				.disableTextSelect()
+				.autoCheck("WORK_TIME","workImgChecked");
+				
+			$(".workTime:first").check("WORK_TIME","workImgChecked");
+			
+			$("#work-button").click(function () {
+				var job = $.getChecked("WORK_CHOOSE").attr("value");
+				var time = $("#work-laikas").slider("value");
+			
+				content("/page/work/do/"+job,{time: time},no);
+			});
+		');
+		
+		{
+		/*
+		<div style="font-size:15px;margin-top:20px">
+			Pradėti
+			<select id="work">
+				<? if ($this->hp>=$this->maxhp*0.2) { ?>
+				<option value="<?=JOB_HUNT?>">Medžioklę</option>
+				<? } ?>
+				<option value="<?=JOB_JOB?>">Darbą</option>
+			</select> Skirti tam
+			<select id="time">
+				<? for ($x=10;$x<=$this->maxhunt;$x+=10) {?>
+					<option value="<?=$x?>"><?=$x?></option>
+				<? } ?>
+			</select> minučių
+			<br />
+			<input type="button" value="Pradėti" onclick="content('/page/work/do/'+$F('work'),{time: $F('time')},no);" />
+		</div>
+
+		<div style="border:solid 1px #1F354C;margin-top:10px">
+			Čia jūs galite dirbti ir medžioti. Daugiausiai jūs galite turėti 60 minučių laiko darbui arba medžioklei. Laiko limitas atsistato kiekvieną dieną 06:00 ir 18:00 valandomis. Medžioklei būtinai reikia turėti daugiau kaip 20% gyvybių.<br />
+			<b>Medžioklė</b> - jūs gausite patirties, truputi agonų ir kartais kokių nors daiktų. Medžioklės metu patiriama žala.<br />
+			<b>Darbas</b> - Jūs gausite tik agonų (daug daugiau agonų negu medžioklėje) ir nepatirsite žalos<br />
+		</div>
+		*/
+		}
+	} else {
+		echo $this->goodOrBad("","Deja pasibaigė laikas");
+	} ?>
+
+<? } ?>

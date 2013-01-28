@@ -1,0 +1,88 @@
+<div style="border:solid 1px #1F354C;display:block;height:<?=$this->screen->height-51?>px;overflow:auto">
+	<table cellspacing="0" class="forum-topics" style="width:100%;border:none">
+		<tr>
+			<td><b>Vieta</b></td>
+			<td><b>Vardas</b></td>
+			<td><b>Rasė</b></td>
+			<td><b>Lygis</b></td>
+			<td><b><a onclick="content('<?=$this->url(array('type' => 'exp'))?>');">Patirtis</a></b></td>
+			<td><b><a onclick="content('<?=$this->url(array('type' => 'kill'))?>');">Laimėtos kovos</a></b></td>
+			<td><b><a onclick="content('<?=$this->url(array('type' => 'dead'))?>');">Pralaimėtos kovos</a></b></td>
+			<td><b><a onclick="content('<?=$this->url(array('type' => 'all'))?>');">Viso kovų</a></b></td>
+		</tr>
+		<tr style="background-color:#121330">
+			<td><?=$this->userplace?></td>
+			<td><?=$this->user->getname()?></td>
+			<td><?=racename($this->user->getrace())?></td>
+			<td><?=$this->user->getlvl()?></td>
+			<td><?=$this->user->getexp()?></td>
+			<td><?=$this->user->getkill()?></td>
+			<td><?=$this->user->getdead()?></td>
+			<td><?=$this->user->getdead()+$this->user->getkill()?></td>
+		</tr>
+		<tr>
+			<td colspan="6">&nbsp;</td>
+		</tr>
+
+		<?
+		$place=$this->start+1;
+		foreach ($this->data as $v) { ?>
+			<tr <?=($place==$this->place)? 'style="background-color:#1F354C"' : ''?>>
+				<td><?=$place?></td>
+				<td><?=get_status_img($v)?> <?=$this->userLink(($v->name).(($v->tag)? " [{$v->tag}]" : ""),null,$v->name)?></td>
+				<td><?=racename($v->race)?></td>
+				<td><?=lvl($v->exp)?></td>
+				<td><?=$v->exp?></td>
+				<td><?=$v->kill?></td>
+				<td><?=$v->dead?></td>
+				<td><?=$v->all?></td>
+			</tr>
+		<? $place++; } ?>
+	</table>
+</div>
+<div style="float:left">
+	<?=$this->paginationControl($this->paginator, 'Sliding', 'pagination_control.phtml');?>
+</div>
+<div style="float:right">
+	<a onclick="content('/page/clantop');">Klanai</a> |
+	<a class="pointer" id="search">Paieška</a> |
+	<a onclick="content('<?=$this->url(array('race' => RACE_ALL))?>');">Visi</a> |
+	<a onclick="content('<?=$this->url(array('race' => RACE_MAN))?>');">Žmonės</a> |
+	<a onclick="content('<?=$this->url(array('race' => RACE_RJAL))?>');">Rjalai</a>
+</div>
+
+<? $this->run("
+	P('search').observe('click',function () {
+		var text='';
+		text+='<div>Pagal vardą<div>';
+		text+='<input type=\\'text\\' id=\\'s-name\\' />';
+		text+='<div style=\\'margin-top:6px\\'>Pagal vietą</div>';
+		text+='<input type=\\'text\\' id=\\'s-place\\' />';
+		text+='<div style=\\'text-align:center\\'>';
+		text+='<input id=\\'s-ok\\' type=\\'button\\' value=\\'Ieškoti\\' />';
+		text+='<input id=\\'s-no\\' type=\\'button\\' value=\\'Atšaukti\\' />';
+		text+='</div>';
+
+		var sdialog = new Dialog({
+			title: 'Iekoti TOPe',
+			content: text,
+			afterOpen: function () {
+				P('s-no').observe('click', function () {
+					Dialogs.close();
+				});
+				P('s-ok').observe('click', function () {
+					content(
+						'{$this->url(array("page" => null))}',
+						{
+							s_name: \$F('s-name'),
+							s_place: \$F('s-place'),
+						},
+						no
+					);
+					Dialogs.close();
+				});
+			}
+		});
+		sdialog.open();
+	});
+")?>

@@ -1,0 +1,109 @@
+<?
+echo $this->goodOrBad($this->good,$this->bad);
+list($job, $left) = $this->user->uzimtumas('hospital');
+if ($job && $left) {
+    echo $this->workImg($job, $left);
+} elseif (!isset($this->finded)) {
+	$dif=floor(max(0,sqrt($this->lvl)-1));
+	echo $this->goodOrBad($this->bad1,$this->error1)?>
+	<?=$this->tip("Jūs pirmiausia turite susirasti priešininką. Tai galite padaryti tiesiog suvesdami priešininko vardą");?>
+	Priešo vardas: <input type="text" id="atack-name" value="<?=$this->search?>"/>
+	<input type="button" id="search-name" value="ieškoti" />
+	<?=$this->tip("Arba jūs galite už 10 agonų pabandyti susirasti žaidėją pagal nurodytus kriterijus. Jeigu užpulsite labai silpną žaidėją, patirties negausite");?>
+	Lygis: nuo <input value="<?=max(1,$this->lvl-2-$dif);?>" size="3" type="text" id="min-lvl" />
+	iki <input value="<?=$this->lvl+2+$dif?>" size="3" type="text" id="max-lvl" />
+	<input type="button" id="search-lvl" value="ieškoti" />
+	<?=$this->tip("Arba jūs galite pamedžioti agonijos padarus");?>
+	Pasirinkite padarą:
+	<div>
+		<select id="mobs" style="float:left;background:none;background-color:#1F1F1F;width:50%" size="5">
+			<?
+			$mobs=new Mobs();
+			$data=$mobs->getmobs($this->lvl);
+
+			foreach ($data as $v) {
+				$ob=new stdClass();
+				$ob->id=$v->id;
+				$ob->title=$v->title;
+				$ob->hp=$v->hp;
+				$ob->dmg_min=$v->dmg_min;
+				$ob->dmg_max=$v->dmg_max;
+				$ob->lvl=$v->lvl;
+				$ob->armor=$v->armor;
+				switch ($v->type) {
+					case 1: $color="#FFFFFF"; break;
+					case 2: $color="#FFCC00"; break;
+					case 3: $color="#FF8080"; break;
+				}
+				?><option style="color:<?=$color?>" value='<?=json_encode($ob)?>'><?=$v->title?> (<?=$v->lvl?> lygis)</option><?
+			} ?>
+		</select>
+		<div id="mobinfo" style="float:left;margin-left:30px;"></div>
+	</div>
+
+	<?=$this->clear("both");?>
+	<?=$this->tip("
+		Čia yra jūsų kariaivmo tvarkaraštis. Jeigu manote jog tuo metu negalėsite žaisti, nustatytikite autoamtinį rėžimą,
+		jug nenorėsite kad kovos įkarštyje jūsų veikėjas nieko nedarytų. Automatinį rėžimą bus galima išjungti bet kada, netgi
+		kovos metu.
+	");?>
+
+	<?
+	$atack=new Atack();
+	$data=$atack->getAllFigterShedule($this->user->getid());
+	?>
+
+	<div class="mainbox" style="width:96%;height:140px;overflow:auto;margin-top:8px;">
+		<? if ($data->count()==0) { ?>
+			<i>Nėra rezervuotos nė vienos kovos</i>
+		<? } else { ?>
+			<table width="100%" id="atack_list">
+				<tr>
+					<td width="100%"><b>Pavadinimas</b></td>
+					<td><b>Žemėlapio dydis</b></td>
+					<td><b>Pradžia</b></td>
+					<td><b>Pabaiga</b></td>
+					<td><b>Ėjimai</b></td>
+					<td><b>Tipas</b></td>
+					<td><b>Pusė</b></td>
+					<td><b>Auto</b></td>
+				</tr>
+				<? foreach ($data as $v) {?>
+					<tr>
+						<td><?=$v->title?></td>
+						<td><?=$v->width?>x<?=$v->height?></td>
+						<td><?=$v->start?></td>
+						<td><?=$v->end?></td>
+						<td><?=$v->turns?></td>
+						<td><?=atacktype($v->type)?></td>
+						<td><?=puse2($v->f_side)?></td>
+						<td><input type="checkbox" id="auto_<?=$v->id?>" <?=($v->f_auto=="Y")? "checked" : "" ?> <?=($v->auto=="N")? "disabled" : "" ?> /></td>
+					</tr>
+				<? }?>
+			</table>
+		<? } ?>
+	</div>
+
+	<? $this->run("
+		P('search-name').observe('click',function () {
+			content('/page/atack',{ 'search_name' : \$F('atack-name') }, no);
+		});
+		P('search-lvl').observe('click', function () {
+			content('/page/atack',{ 'search_lvl' : 1, 'min_lvl' : \$F('min-lvl'), 'max_lvl' : \$F('max-lvl') }, no);
+		});
+		P('mobs').observe('click',function() {
+			mob_info(\$F('mobs').evalJSON());
+		});
+		mob_info(String('".json_encode($ob)."').evalJSON());
+		P('mobs').selectedIndex=P('mobs').length-1;
+	");
+} elseif (!isset($this->atacked)) {
+	echo $this->goodOrBad($this->bad1,$this->error1)?>
+
+	<div style="font-size:20px;">
+		Jūsų priešininkas: <b><?=$this->defname?></b><br />
+		Jūsų priešininko lygis: <b><?=$this->deflvl?></b><br />
+		<input type="button" value="Pulti" onclick="content('/page/atack',{ atack : 1 }, no);" />
+	</div>
+
+<? } ?>

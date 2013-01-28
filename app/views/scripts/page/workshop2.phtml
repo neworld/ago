@@ -1,0 +1,24 @@
+<?=$this->tip(" 
+	Čia jūs galite sujungti dvi emblemas ir gauti vieną emblemą, kuri turės
+	abiejų emblemų atributus. Jungimo kaina priklauso nuo didžiausio lygio
+	emblemos lygio. Tačiau tikimybė yra tik 70%. Nesėkmės atveju viena
+	iš emblemų subirės. Taip pat, sujungtas šitokiu būdu emblemas negalima jungti,
+	nes gausite visiškai naują emblemą, su visiškai atsitiktinu atributu. Jeigu
+	pasiruošę, pasirinkite emblemas, susimokėkite ir sukrižiuokite pirštus :)");?>
+
+<? foreach ($this->emblems as $v) {?>
+	<?=$v->generateDiv("item", "select-emblem");?>
+<?}?> 
+
+<div style="clear:both">
+	<input onclick="join_emblem(1)" id="pay-money" type="button" style="display:none" />
+	<input onclick="join_emblem(2)" id="pay-nano" type="button" style="display:none" value="3 nano kreditus" />
+</div>
+
+<? $this->run("
+	\$$('.select-emblem').each(function (ob) {
+		ob.observe('click', function (e) {
+			select_emblem(Event.findElement(e));
+		});
+	});
+");?>

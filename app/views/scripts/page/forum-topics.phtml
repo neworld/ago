@@ -1,0 +1,37 @@
+<div style="border:solid 1px #1F354C;display:block;height:<?=$this->screen->height-51?>px;overflow:auto">
+	<? if ($this->data->count()>0) { ?>
+		<table cellspacing="0" class="forum-topics" style="width:100%;border:none">
+			<tr>
+				<td width="100%"><b>Pavadinimas</b></td>
+				<td align="center"><b>Autorius</b></td>
+				<td align="center"><b>Žinučių</b></td>
+				<td align="center"><b>Paskutinė žinutė</b></td>
+			</tr>
+			<?foreach ($this->data as $v) { ?>
+				<tr onclick="content('<?=$this->url(array('subid' => $this->subid, 'root' => $v->id))?>');" class="forum_sub pointer">
+					<td><b><?=$v->title?></b></td>
+					<td align="center"><?=$v->name?></td>
+					<td align="center"><?=($v->num)? $v->num : 0;?></td>
+					<td nowrap><?=$v->lastdate?><br />nuo: <?=$v->lastname?></td>
+				</tr>
+			<? } ?>
+		</table>
+	<? } else {?>
+		<div style="text-align:center"><i>Nėra nė vienos žinutės</i></div>
+	<? } ?>
+</div>
+
+<div style="float:left">
+	<?=$this->paginationControl($this->paginator, 'Sliding', 'pagination_control.phtml');?>
+</div>
+<div style="float:right">
+	<a onclick="content('<?=$this->url(array('subid' => 0, 'page' => 1, 'root' => 0))?>');">Grįžti</a> |
+	<a id="create"><?=($this->user->isVal())? 'Nauja tema' : 'Nepatvirtinote pašto adreso'; ?></a>
+</div>
+<? if ($this->user->isVal())
+	$this->run("
+		P('create').observe('click',function () {
+			show_forum_dialog({$this->subid},null,null,{$this->cid});
+		});
+	");
+?>

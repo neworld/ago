@@ -1,0 +1,77 @@
+<div style="border:solid 1px #1F354C;font-size:16px;padding:6px;">
+	Lygis:
+	<input type="text" id="min_lvl" value="<?=$this->min_lvl?>" size="4" maxlength="4"> -
+	<input type="text" id="max_lvl" value="<?=$this->max_lvl?>" size="4" maxlength="4">
+	Max kaina:
+	<input type="text" id="cost" value="<?=$this->cost?>" size="5" maxlength="8">
+	Tipas:
+	<select id="itemtype">
+		<option value=""<?=(!$this->type)? " selected" : "";?>>Visi</option>
+		<? foreach ($this->items as $key => $v) {?>
+			<option value="<?=$key?>"<?=($key==$this->type)? " selected" : "";?>><?=$v['title']?></option>
+		<? } ?>
+	</select>
+	Savo&nbsp;daiktai:
+	<input type="checkbox" id="owner" value="<?=$this->userid?>" <?=($this->owner)? "checked" : ""?>>
+	Savo&nbsp;rasės&nbsp;daiktai:
+	<input type="checkbox" id="race" value="<?=$this->user_race?>" <?=($this->race)? "checked" : ""?>>
+	Pavadinimas
+	<input id="title" type="text" id="race" value="<?=$this->title?>" size="12">
+	<input type="button" id="filtruoti" value="filtruoti"   onclick="content('/page/market/page/<?=$this->page?>/min_lvl/'+$F('min_lvl')+' /max_lvl/'+$F('max_lvl')+' /cost/'+$F('cost')+'/itemtype/'+$F('itemtype')+'/title/'+$F('title')+'/race2/'+((P('race').checked)? '1' : '2')+'/owner/'+((P('owner').checked)? '1' : '2'));">
+	<input type="button" id="filtruoti" value="Išvalyti filtrus"   onclick="content('/page/market/min_lvl/ /max_lvl/ /race2/2');">
+</div>
+<div style="border:solid 1px #1F354C;font-size:16px;padding:6px;">
+	<? foreach($this->data as $v) {
+		$src=$v->item->img;
+		if (!$src) {
+			$src="/img/item/no-item.png";
+		} else {
+			$src="/img/item/$src.png";
+		}
+		if ($this->colors==false) {
+			$border="#000000";
+		} elseif ($v->owner==$this->userid) {
+			$border="#0000FF";
+		} elseif ($v->time>time()-3600) {
+			$border="#00FF00";
+		} elseif ($v->time>time()-3600*4) {
+			$border="#FFCC00";
+		} elseif ($v->time>time()-3600*24) {
+			$border="#800000";
+		} else {
+			$border="#585858";
+		}
+		$function=($v->owner==$this->userid)? "show_remove_dialog" : "show_buy_dialog";
+		?><img id="ITEM-<?=$v->id?>" class="item_drag pointer" alt="ITEM" style="border:solid 1px <?=$border?>;width:42px;height:42px;" src="<?=$src?>" /><?
+		$this->run("new Overlib('".$this->itemOverDiv($v->item,$this->lvl,$this->user_race)."<div style=\"font-weight:bold;font-size:16px\">Savininkas: {$v->ownername}</div><div style=\"font-weight:bold;font-size:16px\">Kaina: {$v->cost}</div>',P('ITEM-{$v->id}'));");
+		$this->run("P('ITEM-{$v->id}').observe('click',function () {
+			$function({$v->id},'{$v->item->title}',{$v->cost},'{$this->url(array())}');
+		});");?>
+	<? } ?>
+</div>
+<div style="text-align:center">
+	<?=$this->paginationControl($this->paginator, 'Sliding', 'pagination_control.phtml');?>
+</div>
+<div style="border:solid 1px #1F354C;font-size:16px;padding:6px;height:24px">
+	<div style="float:left;display:block">
+		<input onclick="content('<?=$this->url()?>/setcolors/1/colors/'+((this.checked)? '1' : '2'),null,no);" type="checkbox" id="colors" value="1" <?=($this->colors)? "checked" : ""?>> Spalvų rodymas
+	</div>
+	<? if ($this->all_place<=$this->use_place) {
+		$color="#FF0000";
+	} elseif ($this->all_place*0.7<=$this->use_place) {
+		$color="#FFCC00";
+	} else {
+		$color="#00FF00";
+	}?>
+	<div style="color:<?=$color?>;font-size:16px;font-weight:bold;float:right">
+		Vieta: <?=$this->use_place?>/<?=$this->all_place?>
+	</div>
+</div>
+<?=($this->colors)? $this->tip("
+	<h3>Spalvų reikšmės</h3>
+	<div style='text-align:center;margin:8px;padding:8px;border:solid 2px #0000FF;'>Šis daiktas yra jūsų</div>
+	<div style='text-align:center;margin:8px;padding:8px;border:solid 2px #00FF00;'>Katik įdėtas daiktas</div>
+	<div style='text-align:center;margin:8px;padding:8px;border:solid 2px #FFCC00;'>seniau nei prieš valandą įdėtas daiktas</div>
+	<div style='text-align:center;margin:8px;padding:8px;border:solid 2px #800000;'>Seniau nei prieš 4 val. įdėtas daiktas</div>
+	<div style='text-align:center;margin:8px;padding:8px;border:solid 2px #585858;'>Seniau nei prieš parą įdėtas daiktas</div>
+") : ''?>

@@ -1,0 +1,156 @@
+<?
+$setsNum = ItemsSets::getSets($this->user->getid());
+?>
+<div id="ITEM_BOX">
+	<? foreach ($this->items_DB as $key => $v) {
+			for ($x=1;$x<=$v['num'];$x++) {
+				$TYPE=($v['num']==1)? $key : "{$key}_{$x}";
+				$ox=$v['pos'][$x]->x;
+				$oy=$v['pos'][$x]->y;
+
+				?><div style="border:none;position:absolute;top:<?=$oy?>px;left:<?=$ox?>px;" id="DROP-<?=$TYPE?>" class="item_drop"><?
+				$this->run("P('DROP-$TYPE').setOpacity(0.75);");
+				if (isset($this->items[$TYPE])) {
+                    $num = @$setsNum[$this->items[$TYPE]->set];
+                    $k = ($this->items[$TYPE]->lvl > $this->user->getlvl())? 0.5 : 1;
+					if ($this->items[$TYPE]->id) {
+						$src = $this->items[$TYPE]->img;
+						if (!$src) {
+							$src="/img/item/no-item.png";
+						} else {
+							$src="/img/item/$src.png";
+						}
+						?><div id="DRAG-<?=$TYPE?>" class="item_drag pointer" style="display:block;width:42px;height:42px;background-image:url('<?=$src?>');"></div><?
+						$this->run("new Overlib('".$this->itemOverDiv($this->items[$TYPE],$this->lvl,$this->race, $num, $k)."',P('DRAG-$TYPE'));");
+						$this->run("P('DRAG-$TYPE').observe('mousedown',function (event) {
+							item_click(Event.element(event),'$TYPE',false,'{$this->items[$TYPE]->userFriendlyLink()}','{$this->items[$TYPE]}', {$this->items[$TYPE]->cost}, '{$this->items[$TYPE]->type}');
+						});");
+					}
+				} else {
+					echo "&nbsp;";
+					$this->run("new Overlib('{$v['title']}',P('DROP-$TYPE'));");
+				}
+				?></div><?
+			}
+	} ?>
+</div>
+
+<div id="BANK_BOX">
+<? for ($x=1;$x<=$this->bankplace;$x++) {
+		$TYPE="BANK_$x";?>
+		<div style="float:left;margin:5px;background:url('/bank_bar.png?num=<?=$x?>');" id="DROP-<?=$TYPE?>" class="item_drop">
+		<?
+		if (isset($this->items[$TYPE])) {
+			if ($this->items[$TYPE]->id) {
+				$src=$this->items[$TYPE]->img;
+				if (!$src) {
+					$src="/img/item/no-item.png";
+				} else {
+					$src="/img/item/$src.png";
+				}
+				?><div id="DRAG-<?=$TYPE?>" class="item_drag pointer" style="display:block;width:42px;height:42px;background-image:url('<?=$src?>');"></div><?
+				$this->run("new Overlib('".$this->itemOverDiv($this->items[$TYPE],$this->lvl,$this->race)."',P('DRAG-$TYPE'));");
+				$this->run("P('DRAG-$TYPE').observe('mousedown',function (event) {
+					item_click(Event.element(event),'$TYPE',false,'{$this->items[$TYPE]->userFriendlyLink()}','{$this->items[$TYPE]}', {$this->items[$TYPE]->cost}, '{$this->items[$TYPE]->type}');
+				});");
+			}
+		} else {
+			echo "&nbsp;";
+		} ?>
+	</div>
+<? } ?>
+</div>
+
+<?
+//joinas
+$joinas=array(
+	array( "type" => "JOINAS_1" , "left" => 20 ),
+	array( "type" => "JOINAS_2" , "left" => 130 ),
+	array( "type" => "JOIN" , "left" => 250 )
+);
+?>
+
+<div id="JOIN_BOX">
+	<h3>Daiktų jungimas</h3>
+	<? foreach ($joinas as $v) {
+		$TYPE=$v['type'];
+		?><div id="DROP-<?=$TYPE?>" class="item_drop join_box" style="left:<?=$v['left']?>px;top:35px;"><?
+		if (isset($this->items[$TYPE])) {
+			if ($this->items[$TYPE]->id) {
+				$src=$this->items[$TYPE]->img;
+				if (!$src) {
+					$src="/img/item/no-item.png";
+				} else {
+					$src="/img/item/$src.png";
+				}
+				?><div id="DRAG-<?=$TYPE?>" class="item_drag pointer" style="display:block;width:42px;height:42px;background-image:url('<?=$src?>');"></div><?
+				$this->run("new Overlib('".$this->itemOverDiv($this->items[$TYPE],$this->lvl,$this->race)."',P('DRAG-$TYPE'));");
+				$this->run("P('DRAG-$TYPE').observe('mousedown',function (event) {
+					item_click(Event.element(event),'$TYPE',false,'{$this->items[$TYPE]->userFriendlyLink()}','{$this->items[$TYPE]}', {$this->items[$TYPE]->cost}, '{$this->items[$TYPE]->type}');
+				});");
+			}
+		} else {
+			echo "&nbsp;";
+		}
+		?></div><?
+	}
+	$lvl1=(isset($this->items['JOINAS_1']))? $this->items['JOINAS_1']->lvl : '---';
+	$lvl2=(isset($this->items['JOINAS_2']))? $this->items['JOINAS_2']->lvl : '---';
+
+	$rezis=count_join_lvl((int)$lvl1, (int)$lvl2, $this->user->getlvl());
+
+	$max=$rezis->max;
+	$min=$rezis->min;
+
+	if ($lvl1!='---' && $lvl2!='---') {
+		$itemstemplate=new Itemstemplates();
+		$item=$itemstemplate->getiitem(null,$this->items['JOINAS_1']->template,$max,$min);
+		$item->title.=' (pavyzdys)';
+	} else {
+		$item=false;
+	}
+
+	$sum=new Minmax($min,$max);
+	?>
+
+	<div style="font-size:35px;position:absolute;left:90px;">+</div>
+	<div style="font-size:35px;position:absolute;left:205px;">+</div>
+	<div style="position:absolute;left:30px;top:80px;"><?=$lvl1?></div>
+	<div style="position:absolute;left:140px;top:80px;"><?=$lvl2?></div>
+	<div id="rezas" style="position:absolute;left:200px;top:80px;color:#008000;">= <?=$sum?></div>
+
+	<?
+	if ($item)
+		$this->run("new Overlib('".$this->itemOverDiv($item,$this->lvl,$this->race)."',P('rezas'));");
+	?>
+
+	<input onclick="content('/page/item', {ITEM_JOIN : 1 }, no);" type="button" value="Jungti" style="position:absolute;left:10px;top:105px;width:280px;" />
+</div>
+
+<div id="ITEM_PLUS_BOX">
+	<input onclick="content('/page/item', {remove_leak : 1 }, no);" type="button" value="Pašalinti tarpus" style="width:280px;" />
+	<input id="QUICK_SELL_BUTTON" onclick="quick_sell_activate();" type="button" value="Aktyvuoti greitą pardavimą" style="width:280px;" />
+	<input onclick="content('/page/item', {sort : 1}, no);" type="button" value="Rikiuoti pagal lygį" style="width:280px;" />
+	<input onclick="content('/page/item', {sort : 2}, no);" type="button" value="Rikiuoti pagal tipą" style="width:280px;" />
+	<input onclick="content('/page/item', {sort : 3}, no);" type="button" value="Rikiuoti pagal tipą ir lygį" style="width:280px;" />
+</div>
+
+<div id="item-menu" style="display:none;height:335px;">
+	<div onclick="hide_item_menu();">Išjungti</div>
+	<div onclick="show_item_dialog();">Perkelti daiktą</div>
+	<div id="item_use_link" onclick="item_use();">Naudoti</div>
+	<div onclick="show_item_link();">Daikto nuorodą</div>
+	<div onclick="P('enterchat').value=$F('enterchat')+' '+ITEM_LINK;P('enterchat').focus();hide_item_menu();">Daikto nuorodą į chatą</div>
+	<div onclick="show_private_market_send();">Privatus turgus</div>
+	<div onclick="show_item_market();">Įdėti į turgų</div>
+	<div onclick="show_item_remove();">Parduoti</div>
+</div>
+
+
+<?
+/*$this->run("
+	P('item-menu').observe('mouseout',function() {
+		hide_item_menu();
+	});
+");*/
+?>

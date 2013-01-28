@@ -1,0 +1,11 @@
+<? if ($this->good || $this->bad) {
+	echo $this->goodOrBad($this->good,$this->bad);
+} else { ?>
+	<p>Kadangi slaptažodžio atkurti neįmanomą, jūs galite jį pakeisti naujuoju. Taigi įveskite naują slaptažodį ir sekite tolimesnes instrukcijas</p>
+
+	<p>
+		<form name="form1" method="post" enctype="multipart/form-data">
+			<input type="password" name="newpsw"> <input type="submit" name="submit" value="Pakeisti">
+		</form>
+	</p>
+<? } ?>

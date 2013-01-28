@@ -1,0 +1,179 @@
+<?=$this->tip("
+	Lyderis: {$this->leadername}<br />
+	Pavadinimas: {$this->clan->title}<br />
+	Tagas: {$this->clan->tag}<br />
+	Lygis: {$this->clan->lvl}<br />
+	Narių skaičius: {$this->members->count()}<br />
+	Telpa narių: {$this->clan->max_member()}<br />
+	Agonų ižde: {$this->clan->money}<br />
+	Nano kreditų ižde: {$this->clan->nano}
+");
+$users = new Users()?>
+
+<table cellspacing="0" class="forum-topics" style="border:solid 1px #1F354C;width:600px;margin:10px;">
+	<tr>
+		<td><b>Vardas</b></td>
+		<td><b>Lygis</b></td>
+		<td><b>Titulas</b></td>
+		<td><b>Gyvybių</b></td>
+		<td><b>Statusas</b></td>
+		<td></td>
+	</tr>
+
+	<? foreach ($this->members as $v) { ?>
+		<tr <?=($v->id==$this->user->getid())? 'style="background-color:#1F354C"' : ''?>>
+			<?
+			$user=($v->id==$this->user->getid())? $this->user : $users->getuser($v->id, true, true);
+			$hp=$user->gethp();
+			$maxhp=$user->maxhp();
+			if ($hp<$maxhp*0.2) {
+				$status="Agonija";
+				$color="#FF0000";
+			} elseif ($job=$user->get_job()) {
+				switch ($job) {
+					case JOB_HEAL : $status="Ligoninėje"; break;
+					case JOB_HUNT : $status="Medžioklėje"; break;
+					case JOB_JOB  : $status="Dirba"; break;
+				}
+				$color="#FFCC00";
+			} else {
+				$status="Laisvas";
+				$color="#00FF00";
+			}
+			?>
+			<td><?=get_status_img($v)?> <?=$this->userLink($v->name,null,$v->name)?></td>
+			<td><?=lvl($v->exp)?></td>
+			<td><div style="width:150px;" id="title-<?=$v->id?>"><?=$v->title?>&nbsp;</div></td>
+			<? if ($this->leader) {
+				$this->run("
+					new Ajax.InPlaceEditor('title-{$v->id}', '/ajax/changetitle/mid/{$v->id}', {
+						okControl : false,
+						cancelText : 'Atšaukti',
+						savingText : 'Saugoma...',
+						clickToEditText : 'Redaguoti',
+						highlightcolor : '#1F354C',
+						highlightendcolor : '#000000',
+						submitOnBlur : true
+					});"
+				);
+			}
+			?>
+			<td><div><?=$this->bar(100,18,'585858','CC2222','FFFFFF',null,$hp,$maxhp,2,null,null,"bar_hp")?></div></td>
+			<td style="color:<?=$color?>;font-size:14px;font-weight:bold"><?=$status?></td>
+			<td>
+				<? if ($this->leader) {?>
+					<img class="pointer" src="/img/money.png" title="Grąžinti pinigų" onclick="view_money_back(<?=$v->id?>);" />
+				<? } ?>
+				<? if (($this->leader && ($v->id!=$this->user->getid())) || (!$this->leader && ($v->id==$this->user->getid()))) {?>
+					<img class="pointer" src="/img/delete.png" title="pašalinti iš klano" onclick="content('/page/clan', {remove : <?=$v->cmid?>}, no);" />
+				<? } ?>
+			</td>
+		</tr>
+	<? } ?>
+</table>
+
+<div style="border:solid 1px #1F354C;margin:10px;padding:8px">
+	<div style="margin-bottom:40px" id="info_private"><?=$this->formatBBcode($this->clan->info_private)?></div>
+	<? if ($this->leader) { ?>
+		<a id="edit_info_private">Redaguoti privačia klano informaciją</a>
+		<?=$this->run("
+			new Ajax.InPlaceEditor('info_private', '/ajax/editclaninfo/type/private', {
+				cancelControl: 'button',
+				okText: 'Saugoti',
+				cancelText: 'Atšaukti',
+				savingText: 'Aaugoma...',
+				externalControl: 'edit_info_private',
+				externalControlOnly: true,
+				rows: 10,
+				cols: 70,
+				loadTextURL: '/ajax/getclaninfo/type/private',
+				highlightendcolor: '#000000',
+				highlightcolor: '#1F354C'
+			});
+		");?>
+	<? } ?>
+</div>
+
+<div style="border:solid 1px #1F354C;margin:10px;padding:8px">
+	<div style="margin-bottom:40px" id="info_public"><?=$this->formatBBcode($this->clan->info_public)?></div>
+	<? if ($this->leader) { ?>
+		<a id="edit_info_public">Redaguoti viešą klano informaciją</a>
+		<?=$this->run("
+			new Ajax.InPlaceEditor('info_public', '/ajax/editclaninfo/type/public', {
+				cancelControl: 'button',
+				okText: 'Saugoti',
+				cancelText: 'Atšaukti',
+				savingText: 'Aaugoma...',
+				externalControl: 'edit_info_public',
+				externalControlOnly: true,
+				rows: 10,
+				cols: 70,
+				loadTextURL: '/ajax/getclaninfo/type/public',
+				highlightendcolor: '#000000',
+				highlightcolor: '#1F354C'
+			});
+		");?>
+	<? } ?>
+</div>
+
+<table cellspacing="0" class="forum-topics" style="border:solid 1px #1F354C;width:600px;margin:10px;">
+	<tr>
+		<td><b>Data</b></td>
+		<td><b>Žinutė</b></td>
+	</tr>
+
+	<? $data=$this->clan->get_logs()?>
+
+	<? foreach ($data as $v) { ?>
+		<tr>
+			<td><?=$v->date?></td>
+			<td><?=$v->text?></td>
+		</tr>
+	<? } ?>
+</table>
+
+<div style="border:solid 1px #1F354C;margin:10px;padding:8px">
+	<? if ($this->leader && ($this->members->count()<$this->clan->max_member())) {?>
+		<a class="pointer" id="clan_invite">Pakviesti narį</a> |
+		<? $this->run("
+			P('clan_invite').observe('click', function () {
+				show_clan_invite();
+			});
+		")?>
+	<? } ?>
+	<? if ($this->leader && isset($this->clan_lvl[$this->clan->lvl])) { ?>
+		<a class="pointer" id="clan_upgrade" onclick="content('/page/clan',{ 'lvl_up' : true }, no);">Patobulinti klaną</a> |
+		<?=$this->run("
+			new Overlib('Jums reikia:<br />Agonų: {$this->clan_lvl[$this->clan->lvl]['money']}<br />Nano kreditų: {$this->clan_lvl[$this->clan->lvl]['nano']}', P('clan_upgrade'));
+		"); ?>
+	<? } ?>
+	<? if ($this->leader) {?>
+		<a class="pointer" id="clan-delete">Naikinti klaną</a> |
+		<? $this->run("
+			P('clan-delete').observe('click', function() {
+				Dialogs.confirm(
+					'Ar tikrai norite panaikinti klaną? Panaikinus klaną prarasite visus investuotus nano kreditus',
+					function () {
+						Dialogs.close();
+						content('".$this->url(array())."', { delete_clan : true }, no);
+					}
+				);
+			});
+		");
+	} ?>
+	<a class="pointer" onclick="content('/page/forum/clan/1');">Klano forumas</a> |
+	<a class="pointer" onclick="sendoney()">Papildyti klano iždą</a> |
+	<a class="pointer" id="sendnano">Nusiųsti nano kredita</a>
+</div>
+
+<?=$this->run("
+	P('sendnano').observe('click', function () {
+		Dialogs.confirm(
+			'Ar tikrai norite pervesti nano kreditą?',
+			function () {
+				Dialogs.close();
+				content('".$this->url(array())."', { send_nano : true }, no);
+			}
+		);
+	});
+")?>

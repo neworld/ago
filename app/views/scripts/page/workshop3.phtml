@@ -1,0 +1,21 @@
+<?=$this->tip("
+	Čia jūs galite pasimainyti emblemomis su Bugehangenu. Tiesa, noriu įspėti,
+	jog niekada nežinosite kokią emblemą duos šis meistras.
+");?>
+
+<? foreach ($this->emblems as $v) {?>
+	<?=$v->generateDiv("item", "select-emblem");?>
+<?}?>
+
+<div style="clear:both">
+	<input onclick="changeEmblems(1)" style="display:none" type="button" id="change-emblem" value="" />
+	<input onclick="changeEmblems(2)" style="display:none" type="button" id="change-emblem2" value="1 nano kreditas" />
+</div>
+
+<? $this->run("
+	\$$('.select-emblem').each(function (ob) {
+		ob.observe('click', function (e) {
+			workshop3(Event.findElement(e));
+		});
+	});
+");?>

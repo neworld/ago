@@ -1,0 +1,57 @@
+<div class="boxasa" style="top:5px;right:5px;width:300px;height:30px;">
+	<div style="float:left" id="a-timer-left">--</div><div style="float:right;margin-top:8px" id="a-timer-bar">Kraunama...</div>
+</div>
+
+<div class="boxasa" style="top:60px;right:5px;width:300px;height:22px;">
+	Liko ėjimų: <span style="font-weight:bold" id="a-turn-left">--</span>
+	Liko kulkų: <span style="font-weight:bold" id="a-bullet-left1">--</span> | <span style="font-weight:bold" id="a-bullet-left2">--</span>
+</div>
+<div class="boxasa" id="a-info" style="top:105px;right:5px;width:300px;height:50px;">
+
+</div>
+
+<div class="boxasa" id="a-info" style="top:175px;right:5px;width:300px;height:26px;">
+	<a onclick="agui.processAtack(0)">Atnaujinti</a> |
+	<a onclick="agui.processAtack(1)">Judėti</a> |
+	<a onclick="agui.processAtack(2)">Užsitaisyti</a> |
+	<a onclick="agui.processAtack(3)">Pulti</a>
+</div>
+
+<div class="boxasa" id="a-log" style="top:224px;right:5px;width:300px;height:<?=$this->screen->height-255?>px;">
+
+</div>
+
+
+<?
+$atack=$this->atack;
+
+$field_h=50;
+$field_w=80;
+
+$field_x=$atack->width;
+$field_y=$atack->height;
+
+$aukstis=($field_y*2+1)*$field_h/2;
+$plotis=($field_w/4*3)*$field_x+$field_w/4;
+
+list($plotis, $aukstis)=count_mapsize($field_x, $field_y, $field_w, $field_h);
+
+$boxo_auktis=min($this->screen->height-20, $aukstis);
+$boxo_plotis=min($this->screen->width-320, $plotis);?>
+
+<div id="a-map-box" class="boxasa" style="height:<?=$boxo_auktis?>px; width:<?=$boxo_plotis?>px;">
+	<canvas id="A_MAP" width="<?=$plotis?>" height="<?=$aukstis?>">
+		Jūsų naršyklė nepalaiko vaizdo generavimo. Rekomenduojame naudoti <a href="http://www.mozilla-europe.org/lt/firefox/" target="_blank">naujausia firefox versija</a>
+	</canvas>
+</div>
+
+<? $this->run("
+	agui = new atackGUI({
+		'aid' : {$atack->id},
+		'uid' : {$this->user->getid()},
+		'width' : {$field_x},
+		'height' : {$field_y},
+		'x' : {$plotis},
+		'y' : {$aukstis}
+	});
+");?>

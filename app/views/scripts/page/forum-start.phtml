@@ -1,0 +1,19 @@
+<table cellspacing="0"  class="forum-topics" style="width:100%;border:solid 1px #1F354C">
+	<tr>
+		<td></td>
+		<td align="center"><b>Viso temų</b></td>
+		<td align="center"><b>Viso žinučių</b></td>
+		<td align="center"><b>Paskutinė žinutė</b></td>
+	</tr>
+	
+
+<? foreach ($this->forums as $key => $v) { ?>
+	<tr onclick="content('<?=$this->url(array('subid' => $key, 'page' => 1, 'root' => 0))?>');" class="forum_sub pointer">
+		<td><b><?=$v['title']?></b><br /><i><?=$v['apie']?></i></td>
+		<td align="center"><?=$v['topics']?></td>
+		<td align="center"><?=$v['posts']?></td>
+		<td nowrap align="center"><?=$v['lastdate']?><br />nuo: <?=$v['lastname']?></td>
+	</tr>
+<? }?>
+
+</table>

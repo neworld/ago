@@ -1,0 +1,35 @@
+<table cellspacing="0" class="forum-topics" style="width:50%;border:solid 1px #1F354C;padding:5px;margin-left:auto;margin-right:auto">
+<? $i=1; ?>
+<? //$users=new Users()?>
+<? foreach ($this->data as $v) { ?>
+
+	<?
+/*	$img='<img src="/img/hat.png" /> ';
+	$user=$users->getuser($v->id);
+	$img2='';
+	for ($x=1;$x<=4; $x++) {
+		if (@$user->getitembyplace("INVENTOR_$x")->template==79) {
+			$img2.=$img;
+		}
+	}
+
+	$img3='';
+	for ($x=1;$x<=3;$x++) {
+		$template=@$user->getitembyplace("UTIL_$x")->template;
+		if (in_array($template,array(80,81,82,83,84))) {
+			$img3.='<img src="/img/cristmas_'.($template-79).'.png" />';
+		}
+	}*/
+	?>
+
+
+
+	<tr<?=($i%2==0)? ' style="background-color:#1F354C"' : ''?>>
+		<td>#<?=$i?></td>
+		<td><a class="pointer" <?=$this->userLink(($v->name).(($v->clan_tag)? " [{$v->clan_tag}]" : ""),null,$v->name)?></td>
+		<td><?=racename($v->race)?></td>
+		<td><?=lvl($v->exp)?></td>
+	</tr>
+	<? $i++ ?>
+<? } ?>
+</table>

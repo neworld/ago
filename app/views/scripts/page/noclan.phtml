@@ -1,0 +1,59 @@
+<?
+if ($this->cantCreate) {
+	echo $this->goodOrBad(null, "Jūs galite kurti klaną tik nuo 20 lygio");
+} else {
+	echo $this->tip("
+		Jūs neesate jokiam klane. Jūs galite sukurti klaną. Jums tereikia turėti noro
+		ir 50.000 agonų. Klanas sukuriamas iš karto ir iškarto galėsite kviesti narius.
+		Į klaną pradžioje tilps 5 žmonės.
+	")?>
+
+	<div>
+		Pavadinimas: <input type="text" id="clan_name" size="32" maxlength="64">
+		Tagas: <input type="text" id="clan_tag" size="4" maxlength="4">
+		Patvirtinti: <input type="checkbox" id="clan_check">
+		<input type="button" id="clan_make" value="Kurti">
+	</div>
+<? } ?>
+
+<?=$this->tip("
+	Jūs taip pat galite priimti kvietimą.
+")?>
+
+<table cellspacing="0" class="forum-topics" style="width:100%;border:none">
+	<tr>
+		<td><b>Klanas</b></td>
+		<td><b>Tagas</b></td>
+		<td><b>Data</b></td>
+		<td><b>Priežastis</b></td>
+		<td></td>
+	</tr>
+
+	<? foreach ($this->invites as $v) { ?>
+		<tr>
+			<td><?=$v->clanname?></td>
+			<td><?=$v->clantag?></td>
+			<td><?=$v->date?></td>
+			<td><?=$v->reason?></td>
+			<td><a onclick="content('<?=$this->url(array())?>',{ goto: <?=$v->id?>}, no);">Ateiti</a></td>
+		</tr>
+	<? } ?>
+
+</table>
+
+<? if (!$this->cantCreate) {
+	$this->run("
+		P('clan_make').observe('click',function () {
+			if (P('clan_check').checked) {
+				content(
+					'".$this->url(array("make_clan" => 1))."',
+					{
+						clan_name: \$F('clan_name'),
+						clan_tag: \$F('clan_tag')
+					},
+					no
+				);
+			}
+		});
+	");
+}?>

@@ -1,0 +1,87 @@
+<?
+if (!$this->user) {
+	echo $this->goodOrBad("", "Vartotojas neegzistuoja");
+} else {
+	
+$cid=$this->user->getclanid();
+if ($cid) {
+	$clans=new Clans();
+	$data=$clans->find($cid);
+	if ($data->count()>0) {
+		$data=$data->getRow(0);
+		$c_title=$data->title;
+		$c_tag=$data->tag;
+		$c_id=$data->id;
+		$clanmembers=new ClanMembers();
+		$select=$clanmembers->select()->where('user = ?',$this->user->getid());
+		$titulas=$clanmembers->fetchRow($select)->title;
+	} else {
+		$cid=null;
+	}
+}
+
+$users=new Users();
+$place=$users->get_place($this->user->getid());
+?>
+
+<div style="position:absolute;top:12px;left:12px;padding:4px;border:solid 1px #1F354C;background-color:#000000">
+	<?=$this->user->getfotoHTML()?>
+</div>
+<div style="position:absolute;top:12px;left:204px;right:12px">
+	<div style="font-size:20px;font-weight:bold"><?=get_status_img($this->user);?> <?=$this->user->getname();?></div>
+	<? if ($this->user->untrust)
+		echo "<div style=\"color:red;\">{$this->user->untrust}</div>"; ?>
+	<div style="margin-left:10px">
+		<div>Lygis: <?=$this->user->getlvl()?></div>
+		<div>Vieta TOP'e: <?=$place?></div>
+		<div>Rasė: <?=racename($this->user->getrace())?></div>
+		<? if ($cid) { ?>
+			<div style="display:block;height:10px;"></div>
+			<div><a onclick="content('/page/claninfo/cid/<?=$c_id?>');">Klanas: <?=$c_title?> [<?=$c_tag?>]</a></div>
+			<div>Titulas: <?=$titulas?></div>
+		<? } ?>
+		<div style="display:block;height:10px;"></div>
+		<!--
+		<div style="font-weight: bold">Turi kiaušinių: <?=$this->user->egg->has?></div>
+		<div style="font-weight: bold">Sudaužė kiaušinių: <?=$this->user->egg->crash?></div>
+		-->
+		<div style="font-weight: bold">Kalėdinių žaisliukų bonusas: <?=$this->user->bonus?></div>
+		
+		<div style="display:block;height:10px;"></div>
+		<div>Paskutinį kartą matytas: <?=date(DATE_FORMAT, $this->user->getLastSeen())?></div>
+		<div>Visas praleistas laikas žaidime: <?=timer2string($this->user->get_session_time())?></div>
+		<div>Užsiregistravo: <?=$this->user->regdate?> (prieš <?=floor((time()-strtostamp($this->user->regdate))/3600/24)?> dienų)</div>
+		<div style="display:block;height:10px;"></div>
+		<div>Pergalės: <?=$this->user->getkill()?></div>
+		<div>Pralaimėjimai: <?=$this->user->getdead()?></div>
+		<? if (($this->user->getkill()+$this->user->getdead())>0) {?>
+			<div>Laimėjimo dažnumas: <?=round($this->user->getkill()/($this->user->getkill()+$this->user->getdead())*100)?>%</div>
+		<? } ?>
+		<div style="display:block;height:10px;"></div>
+		<? if ($this->user->getVardas()) { ?>
+			<div>Vardas: <?=$this->user->getVardas()?></div>
+		<? } ?>
+		<? if ($this->user->getSex()!='N') { ?>
+			<div>Lytis: <?=get_sex_img($this->user->getSex())?></div>
+		<? } ?>
+	</div>
+	<div style="font-size:16px;font-weight:bold;margin-top:15px">Veiksmai</div>
+	<div style="margin-left:10px">
+		<div><a class="pointer" onclick="show_new_pm('<?=$this->user->getname()?>');">Rašyti PM</a></div>
+		<div><a class="pointer" onclick="P('enterchat').value='<?=$this->user->getname()?> >> '+$F('enterchat'); P('enterchat').focus();">Pridėti į chatą</a></div>
+		<div><a class="pointer" onclick="content('/page/atack/search/<?=$this->user->getname()?>');">Pulti</a></div>
+	</div>
+	<div style="font-size:16px;font-weight:bold;margin-top:15px">Apie</div>
+		<div style="margin-left:10px">
+			<?
+			$filterChain = new Zend_Filter();
+			$filterChain->addFilter(new BBcode());
+			$filterChain->addFilter(new ItemLink());
+			$filterChain->addFilter(new ActivateUrl());
+			$filterChain->addFilter(new Smilein());
+			echo $filterChain->filter($this->user->getAbout());
+			?>
+		</div>
+	</div>
+</div>
+<? } ?>

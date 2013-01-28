@@ -1,0 +1,25 @@
+<div style="font-size:14px">Šiame žaidime kaunasi dvi rasės: žmonės ir rjalai.
+Abi rasės stengiasi išvyti priešus iš Signa planetos. Jūs esate  savo rasės
+atstovas, kuris gimė ir užaugo fronte. Matydami vien mirtis, kovas, jūs
+neįsivaizduojate ramesnio gyvenimo kuris slypi už fronto.<br /><br />
+Žaidime jūs galite tobulėti, naudoti įvairius daiktus, kariauti su kitais
+žaidėjais, prekiauti turguje, ar tiesiog ramiai kalbėtis chate. Taip
+pat galite peržiūrėti <a href="/index/screen">Ekrano vaizdus</a>.
+</div>
+
+<h2 class="title" style="margin-top:25px;">Naujienos</h2>
+
+<?
+$view=Zend_Registry::get('db')->fetchAll('SELECT id, title, `date` FROM `news` ORDER BY `id` DESC LIMIT 10');
+
+foreach ($view as $v) {?>
+	<div class="news_line"  onclick="get_new(<?=$v['id']?>,'<?=$v['title']?>');">
+		<div style="float:left">
+			<b><?=$v['title']?></b>
+		</div>
+		<div style="float:right">
+			[<?=$v['date']?>]
+		</div>
+	</div>
+	<?=$this->clear("both")?>
+<? } ?>

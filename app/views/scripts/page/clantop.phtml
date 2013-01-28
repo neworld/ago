@@ -1,0 +1,31 @@
+<div style="border:solid 1px #1F354C;display:block;height:<?=$this->screen->height-40?>px;overflow:auto">
+	<table cellspacing="0" class="forum-topics" style="width:100%;border:none">
+		<tr>
+			<td><b>Vieta</b></td>
+			<td><b>Pavadinimas</b></td>
+			<td><b>Tagas</b></td>
+			<td><b>Rasė</b></td>
+			<td><b>Lygis</b></td>
+			<td><b>Lyderis</b></td>
+			<td><b>Narių skaičius</b></td>
+			<td><b>Bendra patirtis</b></td>
+		</tr>
+		<?
+		$place=1;
+		foreach ($this->data as $v) { ?>
+			<tr class="pointer" onclick="content('/page/claninfo/cid/<?=$v->id?>');" <?=($this->clanid==$v->id)? 'style="background-color:#1F354C"' : ''?>>
+				<td><?=$place?></td>
+				<td><?=$v->title?></td>
+				<td><?=$v->tag?></td>
+				<td><?=racename($v->race)?></td>
+				<td><?=$v->lvl?></td>
+				<td><?=$v->lordname?></td>
+				<td><?=$v->num?></td>
+				<td><?=$v->suma?></td>
+			</tr>
+		<? $place++; } ?>
+	</table>
+</div>
+<div style="float:right">
+	<a onclick="content('/page/top');">Žaidėjai</a>
+</div>

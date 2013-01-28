@@ -1,0 +1,32 @@
+<?php
+echo $this->goodOrBad($this->good, $this->bad);
+/**
+* generuojam misija
+* 
+* @param Mission_Abstract $mission
+*/
+function generateMission($mission, $view) {
+    ?>
+    <div style="width:90%; border:solid #1F354C 1px; padding:8px">
+        <h3><?=$mission->title?></h3>
+        <div style="font-style: italic;font-size:10px">
+            <?=$mission->des?>
+        </div>
+        <div>
+            Užtruks laiko: <?=timer2string($mission->duration)?>
+            Sudėtingumas: <?=$mission->dificulity?>
+            Gausite agonų: <?=$mission->money?>
+        </div>
+        <input type="button" value="Vykdyti" onclick="content('<?=$view->url(array())?>', { 'accept' : <?=$mission->id?>}, no);" />
+    </div>
+    <?
+}
+
+if ($this->data->count() > 0) {
+    foreach ($this->data as $v) {
+        generateMission($v, $this);
+    }
+} else {
+    ?><i>Nėra jūsų lygio misijų</i><?
+}
+?>
