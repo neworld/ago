@@ -243,9 +243,9 @@ class IndexController extends Zend_Controller_Action {
 		$script=Zend_Registry::get('config')->script;
 		$css=Zend_Registry::get('config')->css;
 
-		$this->view->headLink()->appendStylesheet('/screen.css?'.$css)
+		$this->view->headLink()->appendStylesheet('/css/screen.css?'.$css)
 				   ->headLink(array('rel' => 'favicon', 'href' => '/favicon.ico'), 'PREPEND')
-				   ->headLink()->appendStylesheet('/lib/dialog.css?1');
+				   ->headLink()->appendStylesheet('/css/dialog.css?1');
 
 		//kita info
 		$this->view->headMeta()->appendName('keywords', 'Agonija online RPG žaidimas');
