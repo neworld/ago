@@ -4,7 +4,7 @@ padding: 0;
 }
 
 body {
-background: #000000 url(img/img01.gif) repeat-x;
+background: #000000 url(../img/img01.gif) repeat-x;
 font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 font-size: 13px;
 color: #BBBBBB;
@@ -60,18 +60,18 @@ display: none;
 width: 960px;
 height: 143px;
 margin: 0 auto;
-background: url(img/img02.jpg);
+background: url(../img/img02.jpg);
 }
 #header2 {
 width:100%;
 height:202px;
 margin:0 0;
-background: url(img/header2.jpg);
+background: url(../img/header2.jpg);
 }
 #stat_box {
 width:160px;
 height:160px;
-background: url(img/stat_box.png);
+background: url(../img/stat_box.png);
 display:block;
 position:absolute;
 top:11px;
@@ -83,7 +83,7 @@ padding:10px;
 #menu_box {
 width:45px;
 height:180px;
-background: url(img/menu_box.png);
+background: url(../img/menu_box.png);
 display:block;
 position:absolute;
 top:11px;
@@ -104,7 +104,7 @@ width:37px;
 border: none;
 }
 #menu-left {
-background:url(img/menu-left.png);
+background:url(../img/menu-left.png);
 height:90px;
 width:23px;
 display:block;
@@ -113,7 +113,7 @@ top:11px;
 left:202px;
 }
 #menu-main {
-background:url(img/main_menu.png);
+background:url(../img/main_menu.png);
 height:78px;
 padding:5px;
 border-style:solid;
@@ -147,7 +147,7 @@ cursor:pointer;
 color:#FFFFFF;
 }
 #menu-right {
-background:url(img/menu-right.png);
+background:url(../img/menu-right.png);
 height:90px;
 width:23px;
 display:block;
@@ -157,7 +157,7 @@ right:67px;
 margin-left:auto;
 }
 #info {
-background:url(img/main_menu.png);
+background:url(../img/main_menu.png);
 height:59px;
 position:absolute;
 display:block;
@@ -170,7 +170,7 @@ padding:10px;
 overflow:hidden;
 }
 #info2 {
-background:url(img/main_menu.png);
+background:url(../img/main_menu.png);
 height:69px;
 position:absolute;
 display:block;
@@ -275,7 +275,7 @@ display:block;
 padding:8px;
 margin:8px;
 color:#AAAAAA;
-background-image: url(./img/content_back.png);
+background-image: url(../img/content_back.png);
 }
 .mainbox h3 {
 font-size:14px;
@@ -318,7 +318,7 @@ color: #FFFFFF;
 width: 960px;
 height: 51px;
 margin: 0 auto;
-background: url(img/img03.jpg);
+background: url(../img/img03.jpg);
 }
 
 #menu ul {
@@ -350,7 +350,7 @@ text-decoration: underline;
 width: 920px;
 margin: 0 auto;
 padding: 30px 20px 20px 20px;
-background: url(img/img04.jpg) no-repeat;
+background: url(../img/img04.jpg) no-repeat;
 }
 
 /* Content */
@@ -383,7 +383,7 @@ padding: 0 20px;
 .post .meta {
 height: 20px;
 padding: 15px 20px;
-background: url(img/img05.gif) no-repeat;
+background: url(../img/img05.gif) no-repeat;
 line-height: normal;
 }
 .post .meta a {
@@ -427,14 +427,14 @@ list-style: square inside;
 #sidebar h2 {
 height: 50px;
 padding: 13px 20px 0 20px;
-background: url(img/img06.gif) no-repeat;
+background: url(../img/img06.gif) no-repeat;
 font-size: 1.6em;
 }
 
 input {
 margin: 5px 0px;
 padding: 3px 5px;
-background: #1F1F1F url(img/img06.gif) repeat-x center center;
+background: #1F1F1F url(../img/img06.gif) repeat-x center center;
 border: 1px solid #454545;
 font: bold 1.2em "Trebuchet MS", Arial, Helvetica, sans-serif;
 color: #FFFFFF;
@@ -443,7 +443,7 @@ color: #FFFFFF;
 select {
 margin: 5px 0px;
 padding: 3px 5px;
-background: #1F1F1F url(img/img06.gif) no-repeat center center;
+background: #1F1F1F url(../img/img06.gif) no-repeat center center;
 border: 1px solid #454545;
 font: bold 1.2em "Trebuchet MS", Arial, Helvetica, sans-serif;
 color: #FFFFFF;
@@ -493,7 +493,7 @@ margin:10px 40px;
 width: 960px;
 margin: 0 auto;
 padding: 20px 0;
-background: url(img/img07.gif) no-repeat;
+background: url(../img/img07.gif) no-repeat;
 }
 
 #footer p {
@@ -727,7 +727,7 @@ width:190px;
 height:30px;
 border:solid #443F36 1px;
 display:block;
-background-image: url(./img/content_back.png);
+background-image: url(../img/content_back.png);
 color:#AAAAAA;
 cursor: pointer;
 text-align: center;
