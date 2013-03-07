@@ -79,45 +79,25 @@ function show_hide(group,ob) {
 function half_sinoidal (pos) {
 	return (-Math.cos(pos*Math.PI/2+Math.PI/2));
 }
-var MENU_EFFECT;
-var kryptis=null;
-function move_menu_content(s) {
-	var max = P('menu-main-links').getWidth()-P('menu-main').getWidth();
-	var a = P('menu-main-links').positionedOffset();
-	var left=-1*a[0];
 
-	s=(left+s>max)? max-left : s;
-	s=(left+s<=0)? -1*left : s;
-	kryptis=(s>0)? 1 : -1;
-	var duration=0.5;
-	var transition=Effect.Transitions.sinoidal;
-	if (MENU_EFFECT) {
-		if (MENU_EFFECT.state!="finished") {
-			MENU_EFFECT.cancel();
-			duration=0.25;
-			transition=half_sinoidal;
-		}
-	}
-	
-	MENU_EFFECT=new Effect.Move(
-		P('menu-main-links'),
-		{
-			x: -1*s,
-			y:0,
-			duration: duration,
-			transition: transition,
-			beforeUpdate: function () {
-				var b = P('menu-main-links').positionedOffset();
-				var bb=-1*b[0];
-				if (((bb>=max) && (kryptis==1)) || ((bb<=0) && (kryptis==-1))) {
-					MENU_EFFECT.cancel();
-					MENU_EFFECT=null;
-				}
-			}
-		}
-	);
+function move_menu_content(offset) {
+    var menuMainLinks = $('#menu-main-links');
+    var menuMain = $('#menu-main');
 
+    var max = menuMainLinks.width() - menuMain.width();
+    var left = -menuMainLinks.position().left;
+
+    offset = left + offset > max? max - left : offset;
+    offset = left + offset <= 0? -left : offset;
+
+    var offsetString = (offset < 0? "+" : "-") + "=" + Math.abs(offset) + "px";
+
+    menuMainLinks.stop(true, false);
+    menuMainLinks.animate({
+        left: offsetString
+    }, "fast", $.easeInOutQuad);
 }
+
 //mirksiukas
 /*var FLASH_OB=Array();
 function flash_add(ob,clase) {
