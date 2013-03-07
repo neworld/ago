@@ -15,11 +15,11 @@ class MainController extends Zend_Controller_Action {
 		$script=Zend_Registry::get('config')->script;
 		$css=Zend_Registry::get('config')->css;
 
-		$this->view->headLink()->appendStylesheet('/datepicker.css?1')
-				   ->headLink()->appendStylesheet('/screen.css?'.$css)
-				   ->headLink()->appendStylesheet('/protoload.css?'.$css)
-				   ->headLink()->appendStylesheet('/lib/dialog.css?1')
-				   ->headLink()->appendStylesheet('/jquery-ui.css?'.$css)
+		$this->view->headLink()->appendStylesheet('/css/screen.css?'.$css)
+				   ->headLink()->appendStylesheet('/css/protoload.css?'.$css)
+				   ->headLink()->appendStylesheet('/css/dialog.css?1')
+				   ->headLink()->appendStylesheet('/css/dark-hive/jquery-ui.min.css?'.$css)
+				   ->headLink()->appendStylesheet('/css/dark-hive/theme.css?'.$css)
 				   ->headLink(array('rel' => 'favicon', 'href' => '/favicon.ico'), 'PREPEND');
 
 		//kita info
